@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 📦 StockMate - Web Dashboard
 
-## Getting Started
+StockMate adalah sistem manajemen inventaris terintegrasi berbasis web yang dirancang untuk membantu pemilik Usaha Kecil dan Menengah (UKM) dalam mengelola stok produk secara efisien, akurat, dan real-time. 
 
-First, run the development server:
+Sebagai pusat kendali, aplikasi web ini memungkinkan pemilik usaha untuk mengelola stok, memantau pergerakan barang, dan mengambil keputusan proaktif. Sistem ini tersinkronisasi langsung dengan aplikasi mobile staf lapangan melalui REST API terpusat, memastikan data selalu up-to-date.
 
-```bash
+StockMate bukan sekadar alat pencatat, melainkan asisten bisnis cerdas yang dilengkapi dengan fitur otomatis untuk mencegah risiko kehabisan stok sebelum terjadi.
+
+---
+
+## ✨ Fitur Utama (Web Version)
+
+* 📊 **Dashboard & Visualisasi Data:** Pantau kondisi inventaris melalui laporan komprehensif dan grafik tren stok yang mudah dipahami.
+* 🗄️ **Manajemen Master Data:** Kelola data produk, kategori, informasi supplier, dan akun staf lapangan di satu tempat secara terpusat.
+* 🧠 **Smart Forecasting & Alerts:** * Deteksi otomatis risiko kehabisan stok.
+  * Perkiraan tanggal estimasi stok habis (Stockout ETA).
+  * Rekomendasi jumlah pengadaan ulang (restock) berdasarkan riwayat penjualan.
+* ⚡ **Real-time Synchronization:** Terhubung langsung dengan aplikasi mobile staf lapangan, memastikan seluruh pencatatan stok masuk/keluar ter-update seketika di layar pemilik usaha.
+
+---
+
+## 🛠️ Tech Stack
+
+Aplikasi web ini dibangun menggunakan teknologi modern untuk memastikan performa, skalabilitas, dan pengalaman UI yang interaktif:
+
+* **Framework:** Next.js (App Router)
+* **Language:** JavaScript
+* **Styling:** Tailwind CSS
+* **UI Components:** shadcn/ui
+* **Backend API:** Express.js (Repositori Terpisah)
+
+---
+
+## 🚀 Tutorial Testing Project (Getting Started)
+
+Ikuti langkah-langkah berikut untuk menjalankan proyek web StockMate di lingkungan lokal (development).
+
+### Prasyarat
+Pastikan Anda sudah menginstal perangkat lunak berikut di mesin Anda:
+* Node.js (Versi 18.x atau lebih baru)
+* Package Manager (npm / yarn / pnpm)
+* Git
+
+### Langkah Instalasi
+
+**1. Kloning Repositori**
+git clone https://github.com/BeLieM/stockmate-fe.git
+cd stockmate-web
+
+**2. Instalasi Dependensi**
+npm install
+
+**3. Konfigurasi Environment Variables**
+Buat file bernama `.env.local` di root direktori proyek. Sesuaikan URL dengan endpoint backend REST API Express.js yang sedang berjalan:
+NEXT_PUBLIC_API_BASE_URL=http://localhost:5000/api/v1
+
+**4. Jalankan Development Server**
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**5. Akses Aplikasi**
+Buka browser dan akses http://localhost:3000. Anda akan otomatis diarahkan ke halaman Login karena sistem memblokir akses publik ke dashboard.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 👥 Contributors
 
-## Learn More
+StockMate dikembangkan oleh tim yang berkolaborasi untuk mengintegrasikan ekosistem Web, Mobile, dan API:
 
-To learn more about Next.js, take a look at the following resources:
+| Nama | Peran / Fokus | GitHub |
+| :--- | :--- | :--- |
+| **[Billy Marcello]** | Frontend Web Developer (Next.js) | [@BeLieM](https://github.com/BeLieM) |
+| **[Dzakievgnii Imaduizza]** | Backend Engineer (Express.js) | [@username](https://github.com/username) |
+| **[Muhammad Daniswara Mahardika]** | Backend Engineer (Express.js) | [@username](https://github.com/username) |
+| **[Irham Kurnia Putra]** | Mobile Developer (Flutter) | [@username](https://github.com/username) |
+| **[Marcelino Adrian Siring]** | Project Manager | [@username](https://github.com/username) |
+| **[Vito Natael Raenhard]** | UI/UX Designer | [@username](https://github.com/username) |
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📄 Lisensi
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Proyek ini menggunakan MIT License.
