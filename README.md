@@ -43,22 +43,28 @@ Pastikan Anda sudah menginstal perangkat lunak berikut di mesin Anda:
 
 ### Langkah Instalasi
 
-**1. Kloning Repositori**
+**1. Clone Repository**
+```bash
 git clone https://github.com/BeLieM/stockmate-fe.git
-cd stockmate-web
+cd stockmate-frontend
+```
 
 **2. Instalasi Dependensi**
+```bash
 npm install
+```
 
 **3. Konfigurasi Environment Variables**
-Buat file bernama `.env.local` di root direktori proyek. Sesuaikan URL dengan endpoint backend REST API Express.js yang sedang berjalan:
-NEXT_PUBLIC_API_BASE_URL=http://localhost:5000/api/v1
+
+Buat file bernama `.env` di root direktori proyek dan salin `.env.example`.
 
 **4. Jalankan Development Server**
+```bash
 npm run dev
-
+```
 **5. Akses Aplikasi**
-Buka browser dan akses http://localhost:3000. Anda akan otomatis diarahkan ke halaman Login karena sistem memblokir akses publik ke dashboard.
+
+Buka browser dan akses `http://localhost:3000`.
 
 ---
 
@@ -69,11 +75,11 @@ StockMate dikembangkan oleh tim yang berkolaborasi untuk mengintegrasikan ekosis
 | Nama | Peran / Fokus | GitHub |
 | :--- | :--- | :--- |
 | **[Billy Marcello]** | Frontend Web Developer (Next.js) | [@BeLieM](https://github.com/BeLieM) |
-| **[Dzakievgnii Imaduizza]** | Backend Engineer (Express.js) | [@username](https://github.com/username) |
-| **[Muhammad Daniswara Mahardika]** | Backend Engineer (Express.js) | [@username](https://github.com/username) |
-| **[Irham Kurnia Putra]** | Mobile Developer (Flutter) | [@username](https://github.com/username) |
-| **[Marcelino Adrian Siring]** | Project Manager | [@username](https://github.com/username) |
-| **[Vito Natael Raenhard]** | UI/UX Designer | [@username](https://github.com/username) |
+| **[Dzakievgnii Imaduizza]** | Backend Engineer (Express.js) | [@dzakievgnii-imaduizza](https://github.com/dzakievgnii-imaduizza) |
+| **[Muhammad Daniswara Mahardika]** | Backend Engineer (Express.js) | [@danisboges](https://github.com/danisboges) |
+| **[Irham Kurnia Putra]** | Mobile Developer (Flutter) | [@irhamputra77](https://github.com/irhamputra77) |
+| **[Marcelino Adrian Siring]** | Project Manager | [@Marceldrian](https://github.com/Marceldrian) |
+| **[Vito Natael Reinhard]** | UI/UX Designer | [@nataelvito](https://github.com/nataelvito) |
 ---
 
 ## 📄 Lisensi
