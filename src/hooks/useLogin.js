@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export const useLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -11,11 +11,12 @@ export const useLogin = () => {
     setError(null);
 
     try {
-      // TODO: Ganti URL pake endpoint API backend yang udah ready
-      const response = await fetch('https://api.domainkamu.com/v1/auth/login', {
-        method: 'POST',
+      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
@@ -23,14 +24,16 @@ export const useLogin = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Login gagal. Silakan periksa kembali email dan password Anda.');
+        throw new Error(
+          data.message ||
+            "Login gagal. Silakan periksa kembali email dan password Anda."
+        );
       }
 
       // TODO: Simpan token autentikasi (misal: localStorage atau Cookies) di sini
-      
+
       // Redirect ke page dashboard kalau sukses
-      router.push('/dashboard');
-      
+      router.push("/dashboard");
     } catch (err) {
       setError(err.message);
     } finally {
