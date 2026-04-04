@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Eye, EyeOff } from 'lucide-react';
+import Image from 'next/image';
 
 // Uncomment kalau backend ready
 // import { useLogin } from '@/hooks/useLogin'; 
@@ -11,10 +12,10 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  
+
   // State menyimpan pesan error berupa string
   const [fieldErrors, setFieldErrors] = useState({ email: null, password: null });
-  
+
   // --- STATE DUMMY BUAT SLICING ---
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -25,7 +26,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validasi Email
     const isEmailEmpty = email.trim() === '';
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -54,11 +55,11 @@ export default function LoginPage() {
 
     // Error dihapus jika lolos validasi
     setFieldErrors({ email: null, password: null });
-    
+
     // --- LOGIKA BUAT SLICING DOANG ---
     setIsLoading(true);
     setError(null);
-    
+
     setTimeout(() => {
       console.log("Data siap dikirim ke API:", { email, password });
       setIsLoading(false);
@@ -79,20 +80,25 @@ export default function LoginPage() {
     }
   };
 
-  const displayError = error; 
-  const displayLoading = isLoading; 
+  const displayError = error;
+  const displayLoading = isLoading;
 
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4 font-sans">
       <div className="w-full max-w-md flex flex-col items-center">
-        
-        <div className="flex items-center gap-2 mb-8">
-          <div className="w-8 h-8 bg-[#00E599] rounded flex items-center justify-center text-zinc-950 font-bold text-lg">
-            S
-          </div>
-          <span className="text-white font-semibold text-xl tracking-wide">StockMate</span>
+        <div className="flex items-center gap-3 mb-8">
+          <Image
+            src="/stockmate-logo.webp"
+            alt="StockMate Logo"
+            width={40}
+            height={40}
+            priority
+            className="rounded-lg"
+          />
+          <h1 className="text-2xl font-bold tracking-tight">
+            <span className="text-white">Stock</span><span className="text-[#00E599]">Mate</span>
+          </h1>
         </div>
-
         <div className="bg-zinc-900 w-full rounded-xl p-8 shadow-2xl border border-zinc-800">
           <div className="mb-6">
             <h1 className="text-white text-2xl font-semibold mb-1">Welcome back</h1>
@@ -115,11 +121,10 @@ export default function LoginPage() {
                 value={email}
                 onChange={handleInputChange(setEmail, 'email')}
                 placeholder="owner@tokoberkahjaya.id"
-                className={`w-full bg-zinc-950 rounded-lg px-4 py-3 text-sm focus:outline-none transition-all ${
-                  fieldErrors.email 
-                    ? "border-red-500 border text-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500" 
-                    : "border-zinc-800 border text-zinc-200 focus:border-[#00E599] focus:ring-1 focus:ring-[#00E599]"
-                }`}
+                className={`w-full bg-zinc-950 rounded-lg px-4 py-3 text-sm focus:outline-none transition-all ${fieldErrors.email
+                  ? "border-red-500 border text-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                  : "border-zinc-800 border text-zinc-200 focus:border-[#00E599] focus:ring-1 focus:ring-[#00E599]"
+                  }`}
               />
               {fieldErrors.email && (
                 <p className="text-red-500 text-[11px] font-medium mt-1 pl-1">
@@ -138,13 +143,12 @@ export default function LoginPage() {
                   value={password}
                   onChange={handleInputChange(setPassword, 'password')}
                   placeholder="••••••••"
-                  className={`w-full bg-zinc-950 rounded-lg px-4 py-3 text-sm focus:outline-none transition-all pr-10 ${
-                    fieldErrors.password 
-                      ? "border-red-500 border text-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500" 
-                      : "border-zinc-800 border text-zinc-200 focus:border-[#00E599] focus:ring-1 focus:ring-[#00E599]"
-                  }`}
+                  className={`w-full bg-zinc-950 rounded-lg px-4 py-3 text-sm focus:outline-none transition-all pr-10 ${fieldErrors.password
+                    ? "border-red-500 border text-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                    : "border-zinc-800 border text-zinc-200 focus:border-[#00E599] focus:ring-1 focus:ring-[#00E599]"
+                    }`}
                 />
-                <button 
+                <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer"
