@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Eye, EyeOff } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 // Uncomment kalau backend ready
 // import { useLogin } from '@/hooks/useLogin'; 
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   // State menyimpan pesan error berupa string
   const [fieldErrors, setFieldErrors] = useState({ email: null, password: null });
@@ -63,6 +65,7 @@ export default function LoginPage() {
     setTimeout(() => {
       console.log("Data siap dikirim ke API:", { email, password });
       setIsLoading(false);
+      router.push("/home")
     }, 1500);
     // ----------------------------------
 
