@@ -44,11 +44,11 @@ export default function DeleteConfirmModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={!isLoading ? handleClose : undefined}>
-            <DialogContent className="bg-zinc-950 border-zinc-800 text-white max-w-sm p-0 overflow-hidden [&>button]:hidden">
+            <DialogContent className="bg-zinc-50 dark:bg-zinc-950 border-zinc-800 text-white max-w-sm p-0 overflow-hidden [&>button]:hidden">
 
                 <DialogHeader className="p-5 pb-4 border-b border-zinc-800 bg-zinc-900/50 flex flex-row items-start justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-red-500/10 text-red-500 rounded-lg">
+                        <div className="p-2 bg-red-500/20 dark:bg-red-500/10 text-red-500 rounded-lg">
                             <AlertTriangle size={20} />
                         </div>
                         <div className="text-left mt-0">
@@ -61,8 +61,8 @@ export default function DeleteConfirmModal({
                 </DialogHeader>
 
                 <div className="p-6 pb-2">
-                    <p className="text-zinc-400 text-sm leading-relaxed">
-                        Are you sure you want to delete <span className="text-white font-bold">{itemName}</span>?
+                    <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
+                        Are you sure you want to delete <span className="text-black dark:text-white font-bold">{itemName}</span>?
                         This action cannot be undone and will permanently remove this {entityName.toLowerCase()} from your system.
                     </p>
 

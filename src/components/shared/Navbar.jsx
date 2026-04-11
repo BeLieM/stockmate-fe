@@ -1,10 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import ThemeToggle from "./ThemeToggle";
 import NotificationModal from "./NotificationModal";
 
 export default function Navbar() {
+  const pathname = usePathname();
+
+  const getPageTitle = () => {
+    const path = pathname.split('/')[1];
+
+    if (!path || path === "home") return "Dashboard";
+
+    if (path === "rules") return "Stock Rules";
+
+    if (path === "account") return "Account Settings";
+
+    return path.replace(/-/g, ' ');
+  };
 
   const currentDate = new Date().toLocaleDateString('en-GB', {
     weekday: 'long',
@@ -14,12 +27,12 @@ export default function Navbar() {
   });
 
   return (
-    <header className="h-20 bg-[#0A0A0A] border-b border-zinc-800 px-8 flex items-center justify-between shrink-0">
+    <header className="h-20 bg-white dark:bg-[#0A0A0A] border-b border-zinc-200 dark:border-zinc-800 px-8 flex items-center justify-between shrink-0 transition-colors">
       <div>
-        <h1 className="text-white text-xl font-bold capitalize">
-          Dashboard
+        <h1 className="text-zinc-900 dark:text-white text-xl font-bold capitalize transition-colors">
+          {getPageTitle()}
         </h1>
-        <p suppressHydrationWarning className="text-zinc-400 text-xs mt-0.5">
+        <p suppressHydrationWarning className="text-zinc-500 dark:text-zinc-400 text-xs mt-0.5">
           {currentDate}
         </p>
       </div>

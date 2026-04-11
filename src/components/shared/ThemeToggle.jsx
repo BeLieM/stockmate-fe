@@ -7,7 +7,6 @@ import { Sun, Moon } from "lucide-react";
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   
-  // Mencegah hydration mismatch (tombol baru dirender setelah komponen di-mount di client)
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 

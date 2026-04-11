@@ -1,32 +1,23 @@
-import Sidebar from "@/components/shared/Sidebar";
+import Sidebar from "@/components/shared/Sidebar"; // Sesuaikan path-mu
 import Navbar from "@/components/shared/Navbar";
-
-export const metadata = {
-  title: "Dashboard - StockMate",
-  description: "Overview of your inventory",
-};
 
 export default function DashboardLayout({ children }) {
   return (
-    // Menggunakan h-screen dan overflow-hidden agar layout utama tidak bergeser, 
-    // hanya area konten (children) yang bisa di-scroll
-    <div className="flex h-screen bg-[#0A0A0A] overflow-hidden font-sans">
+    <div className="flex h-screen bg-zinc-50 dark:bg-zinc-950 transition-colors duration-200">
       
       {/* Sidebar Kiri */}
       <Sidebar />
 
-      {/* Area Utama Kanan */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
-        
-        {/* Navbar Atas */}
+      {/* Area Kanan (Navbar & Konten) */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <Navbar />
-
-        {/* Area Konten Dinamis */}
-        <main className="flex-1 overflow-y-auto p-8">
+        
+        {/* Main Content */}
+        <main className="flex-1 overflow-y-auto p-6 md:p-8">
           {children}
         </main>
-
       </div>
+
     </div>
   );
 }

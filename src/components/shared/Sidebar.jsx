@@ -24,14 +24,16 @@ export default function Sidebar() {
     ];
 
     return (
-        <aside className="w-64 h-full bg-[#0A0A0A] border-r border-zinc-800 flex flex-col justify-between overflow-y-auto">
+        <aside className="w-64 h-full bg-white dark:bg-[#0A0A0A] border-r border-zinc-200 dark:border-zinc-800 flex flex-col justify-between overflow-y-auto transition-colors duration-200">
             <div>
                 {/* Logo Section */}
                 <div className="p-6">
-                    <Link href="/dashboard" className="flex items-center gap-3">
+                    <Link href="/home" className="flex items-center gap-3">
                         <Image src="/stockmate-logo.webp" alt="StockMate Logo" width={28} height={28} className="rounded-md" />
                         <div className="flex flex-col">
-                            <span className="text-white font-bold text-lg tracking-tight leading-tight">Stock<span className="text-[#00E599]">Mate</span></span>
+                            <span className="text-zinc-900 dark:text-white font-bold text-lg tracking-tight leading-tight transition-colors">
+                                Stock<span className="text-[#00E599]">Mate</span>
+                            </span>
                             <span className="text-zinc-500 text-[10px] uppercase tracking-widest leading-none">Inventory</span>
                         </div>
                     </Link>
@@ -40,7 +42,7 @@ export default function Sidebar() {
                 {/* Active Store Section */}
                 <div className="px-6 mb-6">
                     <p className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold mb-1">Active Store</p>
-                    <p className="text-white text-sm font-semibold">Toko Berkah Jaya</p>
+                    <p className="text-zinc-900 dark:text-white text-sm font-semibold transition-colors">Toko Berkah Jaya</p>
                     <div className="flex items-center gap-1 mt-1">
                         <div className="w-1.5 h-1.5 rounded-full bg-[#00E599]"></div>
                         <p className="text-[#00E599] text-xs">Owner Mode</p>
@@ -56,10 +58,11 @@ export default function Sidebar() {
                             <Link
                                 key={item.name}
                                 href={item.href}
-                                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive
+                                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                                    isActive
                                         ? "bg-[#00E599]/10 text-[#00E599] border border-[#00E599]/20"
-                                        : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50"
-                                    }`}
+                                        : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+                                }`}
                             >
                                 <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
                                 {item.name}
@@ -76,7 +79,7 @@ export default function Sidebar() {
                     <AlertTriangle size={16} className="text-red-500 mt-0.5 shrink-0" />
                     <div>
                         <p className="text-red-500 text-xs font-bold">2 Critical Stock</p>
-                        <p className="text-zinc-400 text-[10px]">Immediate restock needed</p>
+                        <p className="text-red-500/80 text-[10px]">Immediate restock needed</p>
                     </div>
                 </div>
 
@@ -86,8 +89,8 @@ export default function Sidebar() {
                         MA
                     </div>
                     <div className="overflow-hidden">
-                        <p className="text-white text-sm font-semibold truncate">Marcel A.</p>
-                        <p className="text-zinc-500 text-xs truncate">Owner</p>
+                        <p className="text-zinc-900 dark:text-white text-sm font-semibold truncate transition-colors">Marcel A.</p>
+                        <p className="text-zinc-500 dark:text-zinc-400 text-xs truncate transition-colors">Owner</p>
                     </div>
                 </div>
             </div>
