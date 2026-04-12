@@ -96,7 +96,7 @@ export default function AccountPage() {
   const handleSaveProfile = async (e) => {
     e.preventDefault();
     console.log("[SLICING MODE] Saving Profile:", profileData);
-    
+
     /* // KODE API UPDATE PROFILE
     try {
       const token = Cookies.get("stockmate_token");
@@ -121,7 +121,7 @@ export default function AccountPage() {
     }
     console.log("[SLICING MODE] Updating Password...", passwordData);
     setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" }); // Reset form
-    
+
     /* // KODE API UPDATE PASSWORD
     try {
       const token = Cookies.get("stockmate_token");
@@ -143,7 +143,7 @@ export default function AccountPage() {
 
   const handleSignOut = () => {
     console.log("[SLICING MODE] Signing out...");
-    
+
     /* // KODE API/LOGIC SIGN OUT
     Cookies.remove("stockmate_token");
     window.location.href = "/login"; // Redirect ke halaman login
@@ -151,92 +151,84 @@ export default function AccountPage() {
   };
 
   if (isLoading) {
-    return <div className="h-full flex items-center justify-center text-zinc-500">Loading profile data...</div>;
+    return <div className="h-full flex items-center justify-center text-zinc-500 dark:text-zinc-400">Loading profile data...</div>;
   }
 
   return (
     <div className="h-full flex flex-col overflow-y-auto custom-scrollbar pb-6 pr-2">
-      
-      {/* HEADER */}
-      <div className="mb-6 shrink-0">
-        <h2 className="text-white text-2xl font-bold">Account Settings</h2>
-        <p className="text-zinc-500 text-sm">Manage your profile</p>
-      </div>
-
-      {/* GRID LAYOUT: 1 Kolom Kiri, 2 Kolom Kanan di layar besar */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
+
         {/* ================= KOLOM KIRI ================= */}
         <div className="space-y-6">
           {/* PROFILE CARD */}
-          <Card className="bg-zinc-900 border-zinc-800 p-6 flex flex-col items-center text-center">
-            <div className="w-24 h-24 bg-[#00E599] rounded-full flex items-center justify-center text-zinc-950 font-bold text-3xl mb-4">
+          <Card className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 p-6 flex flex-col items-center text-center transition-colors shadow-sm">
+            <div className="w-24 h-24 bg-[#00c985] dark:bg-[#00E599] rounded-full flex items-center justify-center text-white dark:text-zinc-950 font-bold text-3xl mb-4 transition-colors">
               {profileData.initials}
             </div>
-            <h3 className="text-white font-bold text-xl mb-1">{profileData.fullName}</h3>
-            <p className="text-zinc-500 text-sm mb-4">{profileData.email}</p>
-            <div className="border border-[#00E599]/30 text-[#00E599] bg-[#00E599]/10 px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider">
+            <h3 className="text-zinc-900 dark:text-white font-bold text-xl mb-1 transition-colors">{profileData.fullName}</h3>
+            <p className="text-zinc-500 dark:text-zinc-400 text-sm mb-4 transition-colors">{profileData.email}</p>
+            <div className="border border-[#00c985]/30 dark:border-[#00E599]/30 text-[#00c985] dark:text-[#00E599] bg-[#00c985]/10 dark:bg-[#00E599]/10 px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider transition-colors">
               {profileData.role}
             </div>
           </Card>
 
           {/* STORE INFO CARD */}
-          <Card className="bg-zinc-900 border-zinc-800 p-6">
-            <h4 className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest mb-3">Store Info</h4>
+          <Card className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 p-6 transition-colors shadow-sm">
+            <h4 className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest mb-3 transition-colors">Store Info</h4>
             <div className="space-y-1 mb-4">
-              <p className="text-white font-bold text-sm">{profileData.storeName}</p>
-              <p className="text-zinc-400 text-xs">{profileData.storeAddress}</p>
+              <p className="text-zinc-900 dark:text-white font-bold text-sm transition-colors">{profileData.storeName}</p>
+              <p className="text-zinc-600 dark:text-zinc-400 text-xs transition-colors">{profileData.storeAddress}</p>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-[#00E599]"></div>
-              <p className="text-[#00E599] text-xs font-medium">Active since {profileData.joinedDate}</p>
+              <div className="w-2 h-2 rounded-full bg-[#00c985] dark:bg-[#00E599] transition-colors"></div>
+              <p className="text-[#00c985] dark:text-[#00E599] text-xs font-medium transition-colors">Active since {profileData.joinedDate}</p>
             </div>
           </Card>
         </div>
 
         {/* ================= KOLOM KANAN ================= */}
         <div className="lg:col-span-2 space-y-6">
-          
+
           {/* PERSONAL INFO FORM */}
-          <Card className="bg-zinc-900 border-zinc-800 p-6">
+          <Card className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 p-6 transition-colors shadow-sm">
             <div className="mb-6">
-              <h3 className="text-white font-bold text-lg">Personal Information</h3>
-              <p className="text-zinc-500 text-xs mt-1">Update your account details</p>
+              <h3 className="text-zinc-900 dark:text-white font-bold text-lg transition-colors">Personal Information</h3>
+              <p className="text-zinc-500 dark:text-zinc-400 text-xs mt-1 transition-colors">Update your account details</p>
             </div>
-            
+
             <form onSubmit={handleSaveProfile} className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest block">Full Name</label>
-                  <input 
+                  <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">Full Name</label>
+                  <input
                     name="fullName" value={profileData.fullName} onChange={handleProfileChange}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors" 
+                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest block">Email Address</label>
-                  <input 
+                  <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">Email Address</label>
+                  <input
                     name="email" type="email" value={profileData.email} onChange={handleProfileChange}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors" 
+                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest block">Store Name</label>
-                  <input 
+                  <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">Store Name</label>
+                  <input
                     name="storeName" value={profileData.storeName} onChange={handleProfileChange}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors" 
+                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest block">Store Address</label>
-                  <input 
+                  <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">Store Address</label>
+                  <input
                     name="storeAddress" value={profileData.storeAddress} onChange={handleProfileChange}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors" 
+                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors"
                   />
                 </div>
               </div>
               <div className="flex justify-end pt-2">
-                <button type="submit" className="bg-[#00E599] text-zinc-950 px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-[#00c985] transition-colors cursor-pointer">
+                <button type="submit" className="bg-[#00E599] text-zinc-950 px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-[#00c985] transition-colors cursor-pointer shadow-sm">
                   Save Changes
                 </button>
               </div>
@@ -244,41 +236,41 @@ export default function AccountPage() {
           </Card>
 
           {/* CHANGE PASSWORD FORM */}
-          <Card className="bg-zinc-900 border-zinc-800 p-6">
+          <Card className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 p-6 transition-colors shadow-sm">
             <div className="mb-6">
-              <h3 className="text-white font-bold text-lg">Change Password</h3>
-              <p className="text-zinc-500 text-xs mt-1">Ensure your account stays secure</p>
+              <h3 className="text-zinc-900 dark:text-white font-bold text-lg transition-colors">Change Password</h3>
+              <p className="text-zinc-500 dark:text-zinc-400 text-xs mt-1 transition-colors">Ensure your account stays secure</p>
             </div>
 
             <form onSubmit={handleUpdatePassword} className="space-y-5">
               <div className="space-y-1.5">
-                <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest block">Current Password</label>
-                <input 
+                <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">Current Password</label>
+                <input
                   name="currentPassword" type="password" value={passwordData.currentPassword} onChange={handlePasswordChange}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors" 
+                  className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors"
                   placeholder="••••••••" required
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest block">New Password</label>
-                  <input 
+                  <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">New Password</label>
+                  <input
                     name="newPassword" type="password" value={passwordData.newPassword} onChange={handlePasswordChange}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors" 
+                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors"
                     placeholder="••••••••" required
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest block">Confirm New Password</label>
-                  <input 
+                  <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">Confirm New Password</label>
+                  <input
                     name="confirmPassword" type="password" value={passwordData.confirmPassword} onChange={handlePasswordChange}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors" 
+                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors"
                     placeholder="••••••••" required
                   />
                 </div>
               </div>
               <div className="flex justify-end pt-2">
-                <button type="submit" className="bg-[#00E599] text-zinc-950 px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-[#00c985] transition-colors cursor-pointer">
+                <button type="submit" className="bg-[#00E599] text-zinc-950 px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-[#00c985] transition-colors cursor-pointer shadow-sm">
                   Update Password
                 </button>
               </div>
@@ -286,12 +278,12 @@ export default function AccountPage() {
           </Card>
 
           {/* DANGER ZONE */}
-          <Card className="bg-red-500/5 border-red-500/20 p-6">
-            <h3 className="text-red-500 font-bold text-lg mb-1">Danger Zone</h3>
-            <p className="text-zinc-400 text-sm mb-5">Sign out from your account. All unsaved changes will be lost.</p>
-            <button 
+          <Card className="bg-red-50 dark:bg-red-500/5 border-red-200 dark:border-red-500/20 p-6 transition-colors shadow-sm">
+            <h3 className="text-red-600 dark:text-red-500 font-bold text-lg mb-1 transition-colors">Danger Zone</h3>
+            <p className="text-zinc-600 dark:text-zinc-400 text-sm mb-5 transition-colors">Sign out from your account. All unsaved changes will be lost.</p>
+            <button
               onClick={handleSignOut}
-              className="border border-red-500/30 text-red-500 hover:bg-red-500/10 px-6 py-2.5 rounded-lg text-sm font-bold transition-colors cursor-pointer"
+              className="border border-red-300 dark:border-red-500/30 text-red-600 dark:text-red-500 hover:bg-red-100 dark:hover:bg-red-500/10 px-6 py-2.5 rounded-lg text-sm font-bold transition-colors cursor-pointer"
             >
               Sign Out
             </button>

@@ -67,7 +67,6 @@ export default function TransactionsPage() {
   const filteredTransactions = transactions.filter(t => {
     const matchType = filterType === "ALL" || t.type === filterType;
     const matchSearch = t.product.toLowerCase().includes(searchQuery.toLowerCase());
-    // (Logika filter tanggal dilewati untuk slicing, biasanya ditangani oleh Backend)
     return matchType && matchSearch;
   });
 
@@ -78,46 +77,39 @@ export default function TransactionsPage() {
 
   return (
     <div className="h-full flex flex-col overflow-hidden pb-6">
-      
-      {/* HEADER PAGE */}
-      <div className="flex justify-between items-end mb-6 shrink-0">
-        <div>
-          <h2 className="text-white text-2xl font-bold">Transaction History</h2>
-          <p className="text-zinc-500 text-sm">All stock movements</p>
-        </div>
-        
-        {/* Opsional: Search Bar di Header (Sesuai Desain Gambar Pertama) */}
+      {/* Search Bar aligned to right */}
+      <div className="flex justify-end mb-6 shrink-0">
         <div className="relative w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={16} />
-          <input 
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500" size={16} />
+          <input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-zinc-900 border border-zinc-800 rounded-full pl-9 pr-4 py-2 text-sm text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors" 
-            placeholder="Search product..." 
+            className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full pl-9 pr-4 py-2 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors shadow-sm"
+            placeholder="Search product..."
           />
         </div>
       </div>
 
-      <Card className="bg-zinc-900 border-zinc-800 flex flex-col flex-1 min-h-0 overflow-hidden">
-        
+      <Card className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 flex flex-col flex-1 min-h-0 overflow-hidden transition-colors shadow-sm">
+
         {/* TOOLBARS (Filters & Modals) */}
-        <div className="p-4 border-b border-zinc-800 flex justify-between items-center shrink-0 overflow-x-auto custom-scrollbar">
-          
+        <div className="p-4 border-b border-zinc-200 dark:border-zinc-800 flex justify-between items-center shrink-0 overflow-x-auto custom-scrollbar transition-colors">
+
           {/* Date Range Filters */}
-          <div className="flex items-center gap-2 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-1.5 shrink-0">
+          <div className="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-1.5 shrink-0 transition-colors">
             <Calendar size={16} className="text-zinc-500" />
-            <input 
-              type="date" 
-              value={startDate} 
-              onChange={(e)=>setStartDate(e.target.value)} 
-              className="bg-transparent text-sm text-zinc-300 focus:outline-none custom-date-input w-[110px]" 
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="bg-transparent text-sm text-zinc-700 dark:text-zinc-300 focus:outline-none custom-date-input w-[110px]"
             />
-            <span className="text-zinc-600 text-sm">→</span>
-            <input 
-              type="date" 
-              value={endDate} 
-              onChange={(e)=>setEndDate(e.target.value)} 
-              className="bg-transparent text-sm text-zinc-300 focus:outline-none custom-date-input w-[110px]" 
+            <span className="text-zinc-400 dark:text-zinc-600 text-sm">→</span>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="bg-transparent text-sm text-zinc-700 dark:text-zinc-300 focus:outline-none custom-date-input w-[110px]"
             />
           </div>
 
@@ -125,31 +117,31 @@ export default function TransactionsPage() {
           <div className="flex gap-3 shrink-0">
             {/* Filter Buttons */}
             <div className="flex gap-2 mr-2">
-              <button onClick={() => setFilterType("ALL")} className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors border ${filterType === "ALL" ? 'bg-zinc-800 text-white border-zinc-700' : 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:bg-zinc-800'}`}>
+              <button onClick={() => setFilterType("ALL")} className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors border ${filterType === "ALL" ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white border-zinc-300 dark:border-zinc-700' : 'bg-white dark:bg-zinc-950 text-zinc-500 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800'}`}>
                 All Types
               </button>
-              
-              <button onClick={() => setFilterType("IN")} className={`px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors border ${filterType === "IN" ? 'bg-[#00E599]/10 text-[#00E599] border-[#00E599]/30' : 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:bg-[#00E599]/10 hover:text-[#00E599]'}`}>
+
+              <button onClick={() => setFilterType("IN")} className={`px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors border ${filterType === "IN" ? 'bg-[#00E599]/10 text-[#00c985] dark:text-[#00E599] border-[#00E599]/30' : 'bg-white dark:bg-zinc-950 text-zinc-500 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:bg-[#00E599]/10 hover:text-[#00c985] dark:hover:text-[#00E599]'}`}>
                 <ArrowUp size={16} /> Stock In
               </button>
-              
-              <button onClick={() => setFilterType("OUT")} className={`px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors border ${filterType === "OUT" ? 'bg-[#4DA6FF]/10 text-[#4DA6FF] border-[#4DA6FF]/30' : 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:bg-[#4DA6FF]/10 hover:text-[#4DA6FF]'}`}>
+
+              <button onClick={() => setFilterType("OUT")} className={`px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors border ${filterType === "OUT" ? 'bg-[#4DA6FF]/10 text-[#2b8eea] dark:text-[#4DA6FF] border-[#4DA6FF]/30' : 'bg-white dark:bg-zinc-950 text-zinc-500 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:bg-[#4DA6FF]/10 hover:text-[#2b8eea] dark:hover:text-[#4DA6FF]'}`}>
                 <ArrowDown size={16} /> Stock Out
               </button>
             </div>
 
             {/* Modals Triggers */}
-            <div className="w-px h-8 bg-zinc-800 my-auto mx-1"></div> {/* Divider */}
+            <div className="w-px h-8 bg-zinc-200 dark:bg-zinc-800 my-auto mx-1 transition-colors"></div> {/* Divider */}
 
-            <button onClick={() => setIsStockInOpen(true)} className="px-3 py-2 bg-zinc-950 text-[#00E599] border border-[#00E599]/20 hover:border-[#00E599]/50 hover:bg-[#00E599]/10 rounded-lg text-sm font-bold transition-colors flex items-center gap-2">
+            <button onClick={() => setIsStockInOpen(true)} className="px-3 py-2 bg-white dark:bg-zinc-950 text-[#00c985] dark:text-[#00E599] border border-[#00E599]/20 hover:border-[#00E599]/50 hover:bg-[#00E599]/10 rounded-lg text-sm font-bold transition-colors flex items-center gap-2">
               <Plus size={16} /> In
             </button>
-            <button onClick={() => setIsStockOutOpen(true)} className="px-3 py-2 bg-zinc-950 text-[#4DA6FF] border border-[#4DA6FF]/20 hover:border-[#4DA6FF]/50 hover:bg-[#4DA6FF]/10 rounded-lg text-sm font-bold transition-colors flex items-center gap-2">
+            <button onClick={() => setIsStockOutOpen(true)} className="px-3 py-2 bg-white dark:bg-zinc-950 text-[#2b8eea] dark:text-[#4DA6FF] border border-[#4DA6FF]/20 hover:border-[#4DA6FF]/50 hover:bg-[#4DA6FF]/10 rounded-lg text-sm font-bold transition-colors flex items-center gap-2">
               <Plus size={16} /> Out
             </button>
 
             {/* Export CSV */}
-            <button onClick={handleExportCSV} className="px-4 py-2 bg-[#00E599] text-zinc-950 rounded-lg text-sm font-bold hover:bg-[#00c985] transition-colors flex items-center gap-2 ml-2">
+            <button onClick={handleExportCSV} className="px-4 py-2 bg-[#00E599] text-zinc-950 rounded-lg text-sm font-bold hover:bg-[#00c985] transition-colors flex items-center gap-2 ml-2 shadow-sm">
               <Download size={16} /> Export CSV
             </button>
           </div>
@@ -157,20 +149,19 @@ export default function TransactionsPage() {
 
         {/* TABLE KONTEN */}
         <div className="flex-1 overflow-y-auto min-h-0 custom-scrollbar">
-          <Table className="text-zinc-200 w-full min-w-[900px]">
-            <TableHeader className="border-b border-zinc-800 sticky top-0 bg-zinc-900 z-10">
-              <TableRow className="border-zinc-800 hover:bg-transparent">
-                {/* SEMUA HEADER RATA TENGAH (text-center) */}
-                <TableHead className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest h-10 text-center">#</TableHead>
-                <TableHead className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Product</TableHead>
-                <TableHead className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Type</TableHead>
-                <TableHead className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Quantity</TableHead>
-                <TableHead className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Staff</TableHead>
-                <TableHead className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Note</TableHead>
-                <TableHead className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Date & Time</TableHead>
+          <Table className="text-zinc-700 dark:text-zinc-200 w-full min-w-[900px]">
+            <TableHeader className="border-b border-zinc-200 dark:border-zinc-800 sticky top-0 bg-zinc-50 dark:bg-zinc-900 z-10 transition-colors">
+              <TableRow className="border-none hover:bg-transparent">
+                <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">#</TableHead>
+                <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Product</TableHead>
+                <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Type</TableHead>
+                <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Quantity</TableHead>
+                <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Staff</TableHead>
+                <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Note</TableHead>
+                <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Date & Time</TableHead>
               </TableRow>
             </TableHeader>
-            
+
             <TableBody>
               {filteredTransactions.length === 0 ? (
                 <TableRow>
@@ -178,49 +169,46 @@ export default function TransactionsPage() {
                 </TableRow>
               ) : (
                 filteredTransactions.map((trx) => (
-                  <TableRow key={trx.id} className="border-zinc-800 hover:bg-zinc-800/30 transition-colors h-14">
-                    
-                    {/* SEMUA ISI RATA TENGAH (text-center align-middle) */}
+                  <TableRow key={trx.id} className="border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors h-14">
+
                     <TableCell className="text-zinc-500 text-xs font-mono align-middle text-center">
                       #{trx.id}
                     </TableCell>
-                    
-                    <TableCell className="font-bold text-white text-sm align-middle text-center">
+
+                    <TableCell className="font-bold text-zinc-900 dark:text-white text-sm align-middle text-center transition-colors">
                       {trx.product}
                     </TableCell>
-                    
-                    {/* TYPE BADGE (justify-center) */}
+
                     <TableCell className="align-middle text-center">
                       <div className="flex justify-center">
-                        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border w-fit ${trx.type === 'IN' ? 'bg-[#00E599]/10 text-[#00E599] border-[#00E599]/20' : 'bg-[#4DA6FF]/10 text-[#4DA6FF] border-[#4DA6FF]/20'}`}>
+                        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border w-fit ${trx.type === 'IN' ? 'bg-[#00E599]/10 text-[#00c985] dark:text-[#00E599] border-[#00E599]/20' : 'bg-[#4DA6FF]/10 text-[#2b8eea] dark:text-[#4DA6FF] border-[#4DA6FF]/20'}`}>
                           {trx.type === 'IN' ? <ArrowUp size={12} strokeWidth={3} /> : <ArrowDown size={12} strokeWidth={3} />}
                           {trx.type}
                         </div>
                       </div>
                     </TableCell>
 
-                    <TableCell className={`font-mono text-base font-bold align-middle text-center ${trx.type === 'IN' ? 'text-[#00E599]' : 'text-[#4DA6FF]'}`}>
+                    <TableCell className={`font-mono text-base font-bold align-middle text-center ${trx.type === 'IN' ? 'text-[#00c985] dark:text-[#00E599]' : 'text-[#2b8eea] dark:text-[#4DA6FF]'}`}>
                       {trx.qty > 0 ? `+${trx.qty}` : trx.qty}
                     </TableCell>
 
-                    {/* STAFF AVATAR (justify-center) */}
                     <TableCell className="align-middle text-center">
                       <div className="flex items-center justify-center gap-2.5">
                         <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white ${trx.staff.color}`}>
                           {trx.staff.init}
                         </div>
-                        <span className="text-sm text-zinc-300 font-medium">{trx.staff.name}</span>
+                        <span className="text-sm text-zinc-700 dark:text-zinc-300 font-medium transition-colors">{trx.staff.name}</span>
                       </div>
                     </TableCell>
 
-                    <TableCell className="text-xs text-zinc-500 align-middle text-center">
+                    <TableCell className="text-xs text-zinc-500 dark:text-zinc-400 align-middle text-center transition-colors">
                       {trx.note}
                     </TableCell>
 
-                    <TableCell className="text-xs text-zinc-500 font-mono align-middle text-center">
+                    <TableCell className="text-xs text-zinc-500 dark:text-zinc-400 font-mono align-middle text-center transition-colors">
                       {trx.date}
                     </TableCell>
-                    
+
                   </TableRow>
                 ))
               )}
@@ -232,7 +220,7 @@ export default function TransactionsPage() {
       {/* Panggilan Modal */}
       <StockInModal isOpen={isStockInOpen} onClose={() => setIsStockInOpen(false)} />
       <StockOutModal isOpen={isStockOutOpen} onClose={() => setIsStockOutOpen(false)} />
-      
+
     </div>
   );
 }

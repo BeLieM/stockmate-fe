@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Eye, EyeOff } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 // Uncomment kalau backend ready
-// import { useLogin } from '@/hooks/useLogin'; 
+// import { useAuth } from '@/hooks/useAuth'; 
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -25,6 +25,17 @@ export default function LoginPage() {
 
   // Uncomment kalau backend ready
   // const { login, isLoading: apiLoading, error: apiError } = useLogin();
+
+  // --- LOGIKA MEMBACA TEMA DARI HISTORI BROWSER ---
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("stockmate_theme");
+    if (savedTheme === "light") {
+      document.documentElement.classList.remove("dark");
+    } else {
+      // Default ke dark mode jika belum ada history, atau jika history-nya 'dark'
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,8 +98,10 @@ export default function LoginPage() {
   const displayLoading = isLoading;
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4 font-sans">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center p-4 font-sans transition-colors duration-200">
       <div className="w-full max-w-md flex flex-col items-center">
+        
+        {/* LOGO SECTION */}
         <div className="flex items-center gap-3 mb-8">
           <Image
             src="/stockmate-logo.webp"
@@ -96,27 +109,31 @@ export default function LoginPage() {
             width={40}
             height={40}
             priority
-            className="rounded-lg"
+            className="rounded-lg shadow-sm"
           />
-          <h1 className="text-2xl font-bold tracking-tight">
-            <span className="text-white">Stock</span><span className="text-[#00E599]">Mate</span>
+          <h1 className="text-2xl font-bold tracking-tight transition-colors">
+            <span className="text-zinc-900 dark:text-white">Stock</span><span className="text-[#00c985] dark:text-[#00E599]">Mate</span>
           </h1>
         </div>
-        <div className="bg-zinc-900 w-full rounded-xl p-8 shadow-2xl border border-zinc-800">
-          <div className="mb-6">
-            <h1 className="text-white text-2xl font-semibold mb-1">Welcome back</h1>
-            <p className="text-zinc-400 text-sm">Sign in to your StockMate account</p>
+
+        {/* CARD CONTAINER */}
+        <div className="bg-white dark:bg-zinc-900 w-full rounded-xl p-8 shadow-2xl border border-zinc-200 dark:border-zinc-800 transition-colors">
+          
+          <div className="mb-6 text-center">
+            <h1 className="text-zinc-900 dark:text-white text-2xl font-bold mb-1 transition-colors">Welcome back</h1>
+            <p className="text-zinc-500 dark:text-zinc-400 text-sm transition-colors">Sign in to your StockMate account</p>
           </div>
 
           <form noValidate onSubmit={handleSubmit} className="space-y-5">
             {displayError && (
-              <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-500 text-sm">
+              <div className="p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/50 rounded-lg text-red-600 dark:text-red-500 text-sm transition-colors">
                 {displayError}
               </div>
             )}
 
+            {/* INPUT EMAIL */}
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block">
+              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block transition-colors">
                 Email Address
               </label>
               <input
@@ -124,20 +141,22 @@ export default function LoginPage() {
                 value={email}
                 onChange={handleInputChange(setEmail, 'email')}
                 placeholder="owner@tokoberkahjaya.id"
-                className={`w-full bg-zinc-950 rounded-lg px-4 py-3 text-sm focus:outline-none transition-all ${fieldErrors.email
-                  ? "border-red-500 border text-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                  : "border-zinc-800 border text-zinc-200 focus:border-[#00E599] focus:ring-1 focus:ring-[#00E599]"
-                  }`}
+                className={`w-full bg-zinc-50 dark:bg-zinc-950 rounded-lg px-4 py-3 text-sm focus:outline-none transition-all ${
+                  fieldErrors.email
+                    ? "border-red-500 border text-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                    : "border-zinc-200 dark:border-zinc-800 border text-zinc-900 dark:text-zinc-200 focus:border-[#00E599] focus:ring-1 focus:ring-[#00E599]"
+                }`}
               />
               {fieldErrors.email && (
-                <p className="text-red-500 text-[11px] font-medium mt-1 pl-1">
+                <p className="text-red-500 text-[11px] font-medium mt-1 pl-1 transition-colors">
                   {fieldErrors.email}
                 </p>
               )}
             </div>
 
+            {/* INPUT PASSWORD */}
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block">
+              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block transition-colors">
                 Password
               </label>
               <div className="relative">
@@ -146,36 +165,39 @@ export default function LoginPage() {
                   value={password}
                   onChange={handleInputChange(setPassword, 'password')}
                   placeholder="••••••••"
-                  className={`w-full bg-zinc-950 rounded-lg px-4 py-3 text-sm focus:outline-none transition-all pr-10 ${fieldErrors.password
-                    ? "border-red-500 border text-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                    : "border-zinc-800 border text-zinc-200 focus:border-[#00E599] focus:ring-1 focus:ring-[#00E599]"
-                    }`}
+                  className={`w-full bg-zinc-50 dark:bg-zinc-950 rounded-lg px-4 py-3 text-sm focus:outline-none transition-all pr-10 ${
+                    fieldErrors.password
+                      ? "border-red-500 border text-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                      : "border-zinc-200 dark:border-zinc-800 border text-zinc-900 dark:text-zinc-200 focus:border-[#00E599] focus:ring-1 focus:ring-[#00E599]"
+                  }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors cursor-pointer"
                 >
                   {showPassword ? <EyeOff size={18} strokeWidth={1.5} /> : <Eye size={18} strokeWidth={1.5} />}
                 </button>
               </div>
               {fieldErrors.password && (
-                <p className="text-red-500 text-[11px] font-medium mt-1 pl-1">
+                <p className="text-red-500 text-[11px] font-medium mt-1 pl-1 transition-colors">
                   {fieldErrors.password}
                 </p>
               )}
             </div>
 
+            {/* FORGOT PASSWORD LINK */}
             <div className="flex justify-end pt-1">
-              <Link href="/forgot-password" className="text-[#00E599] text-xs hover:underline font-medium cursor-pointer">
+              <Link href="/forgot-password" className="text-[#00c985] dark:text-[#00E599] text-xs hover:underline font-bold cursor-pointer transition-colors">
                 Forgot password?
               </Link>
             </div>
 
+            {/* SUBMIT BUTTON */}
             <button
               type="submit"
               disabled={displayLoading}
-              className="w-full bg-[#00E599] text-zinc-950 font-semibold rounded-lg py-3 mt-2 hover:bg-[#00c985] transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 cursor-pointer"
+              className="w-full bg-[#00E599] text-zinc-950 font-bold rounded-lg py-3 mt-2 hover:bg-[#00c985] transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 cursor-pointer shadow-sm"
             >
               {displayLoading ? (
                 <>
@@ -191,9 +213,10 @@ export default function LoginPage() {
             </button>
           </form>
 
+          {/* REGISTER LINK */}
           <div className="mt-6 text-center text-xs">
-            <span className="text-zinc-500">Don't have an account? </span>
-            <Link href="/register" className="text-[#00E599] hover:underline font-medium">
+            <span className="text-zinc-500 dark:text-zinc-400 transition-colors">Don't have an account? </span>
+            <Link href="/register" className="text-[#00c985] dark:text-[#00E599] hover:underline font-bold transition-colors">
               Register here
             </Link>
           </div>

@@ -8,8 +8,8 @@ import DeleteConfirmModal from "@/components/shared/DeleteConfirmModal";
 
 export default function SuppliersPage() {
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [formMode, setFormMode] = useState("add"); 
-  const [selectedSupplier, setSelectedSupplier] = useState(null); 
+  const [formMode, setFormMode] = useState("add");
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [suppliers, setSuppliers] = useState([]);
@@ -44,7 +44,7 @@ export default function SuppliersPage() {
   };
   */
 
-  const filteredSuppliers = suppliers.filter((sup) => 
+  const filteredSuppliers = suppliers.filter((sup) =>
     sup.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -75,10 +75,10 @@ export default function SuppliersPage() {
       alert("Coordinates not available for this supplier.");
       return;
     }
-    
+
     // KODE DUMMY SLICING
     console.log(`[SLICING MODE] Membuka Maps untuk ${name} di kordinat: ${lat}, ${lng}`);
-    
+
     // KODE PRODUCTION (Google Maps Link)
     // Uncomment baris di bawah ini jika ingin membuka tab baru Google Maps sungguhan
     // window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank');
@@ -86,30 +86,21 @@ export default function SuppliersPage() {
 
   return (
     <div className="h-full flex flex-col overflow-hidden pb-6">
-      
-      {/* HEADER */}
-      <div className="flex justify-between items-end mb-6 shrink-0">
-        <div>
-          <h2 className="text-white text-2xl font-bold">Supplier Management</h2>
-          <p className="text-zinc-500 text-sm">{filteredSuppliers.length} registered suppliers</p>
-        </div>
-      </div>
-
       {/* TOOLBAR */}
       <div className="flex gap-4 shrink-0 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={18} />
-          <input 
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500" size={18} />
+          <input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg pl-10 pr-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors" 
-            placeholder="Search supplier name..." 
+            className="w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-full pl-10 pr-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors shadow-sm"
+            placeholder="Search supplier name..."
           />
         </div>
-        <button className="bg-zinc-950 text-zinc-400 px-4 py-2.5 rounded-lg text-sm font-medium border border-zinc-800 hover:bg-zinc-800 transition-colors flex items-center gap-2">
+        <button className="bg-white dark:bg-zinc-950 text-zinc-600 dark:text-zinc-400 px-4 py-2.5 rounded-lg text-sm font-medium border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors flex items-center gap-2 shadow-sm">
           <RefreshCw size={14} /> Refresh
         </button>
-        <button onClick={handleOpenAdd} className="bg-[#00E599] text-zinc-950 px-4 py-2.5 rounded-lg font-bold flex items-center gap-2 hover:bg-[#00c985] transition-colors cursor-pointer">
+        <button onClick={handleOpenAdd} className="bg-[#00E599] text-zinc-950 px-4 py-2.5 rounded-lg font-bold flex items-center gap-2 hover:bg-[#00c985] transition-colors cursor-pointer shadow-sm">
           <Plus size={18} strokeWidth={3} /> Add Supplier
         </button>
       </div>
@@ -117,57 +108,57 @@ export default function SuppliersPage() {
       {/* GRID CARDS CONTENT */}
       <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 pb-2">
         {filteredSuppliers.length === 0 ? (
-          <div className="text-center py-12 text-zinc-500 bg-zinc-900 border border-zinc-800 rounded-xl">
+          <div className="text-center py-12 text-zinc-500 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl transition-colors shadow-sm">
             No suppliers found.
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredSuppliers.map((sup) => (
-              <div key={sup.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 flex flex-col justify-between hover:border-zinc-700 transition-colors">
-                
+              <div key={sup.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 flex flex-col justify-between hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors shadow-sm">
+
                 <div>
                   {/* Top Row: Icon & Actions */}
                   <div className="flex justify-between items-start mb-4">
-                    <div className="w-10 h-10 bg-zinc-950 rounded-lg flex items-center justify-center border border-zinc-800/50">
-                      <Building2 className="text-[#00E599]" size={20} />
+                    <div className="w-10 h-10 bg-zinc-50 dark:bg-zinc-950 rounded-lg flex items-center justify-center border border-zinc-200 dark:border-zinc-800/50 transition-colors">
+                      <Building2 className="text-[#00c985] dark:text-[#00E599]" size={20} />
                     </div>
                     <div className="flex gap-1.5">
-                      <button onClick={() => handleOpenEdit(sup)} className="p-1.5 text-zinc-500 hover:text-white bg-zinc-950 rounded-md transition-colors border border-zinc-800">
+                      <button onClick={() => handleOpenEdit(sup)} className="p-1.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-white bg-white dark:bg-zinc-950 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md transition-colors border border-zinc-200 dark:border-zinc-800 shadow-sm">
                         <Edit2 size={12} />
                       </button>
-                      <button onClick={() => handleOpenDelete(sup)} className="p-1.5 text-red-500/70 hover:text-red-500 bg-zinc-950 rounded-md transition-colors border border-red-500/20">
+                      <button onClick={() => handleOpenDelete(sup)} className="p-1.5 text-red-500/70 hover:text-red-600 dark:hover:text-red-500 bg-white dark:bg-zinc-950 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-md transition-colors border border-red-200 dark:border-red-500/20 shadow-sm">
                         <Trash2 size={12} />
                       </button>
                     </div>
                   </div>
 
                   {/* Info: Name & Category */}
-                  <h3 className="text-white font-bold text-lg mb-2">{sup.name}</h3>
-                  <span className="inline-block bg-[#4DA6FF]/10 text-[#4DA6FF] text-[10px] font-bold px-2.5 py-1 rounded-md mb-4 border border-[#4DA6FF]/20">
+                  <h3 className="text-zinc-900 dark:text-white font-bold text-lg mb-2 transition-colors">{sup.name}</h3>
+                  <span className="inline-block bg-[#4DA6FF]/10 text-[#2b8eea] dark:text-[#4DA6FF] text-[10px] font-bold px-2.5 py-1 rounded-md mb-4 border border-[#4DA6FF]/20">
                     {sup.category}
                   </span>
 
                   {/* Details: Phone, Address, Lat/Lng */}
                   <div className="space-y-2 mb-6">
                     <div className="flex items-start gap-2.5">
-                      <Phone size={14} className="text-zinc-500 mt-0.5 shrink-0" />
-                      <p className="text-zinc-400 text-xs font-medium">{sup.phone}</p>
+                      <Phone size={14} className="text-zinc-400 dark:text-zinc-500 mt-0.5 shrink-0" />
+                      <p className="text-zinc-600 dark:text-zinc-400 text-xs font-medium transition-colors">{sup.phone}</p>
                     </div>
                     <div className="flex items-start gap-2.5">
                       <MapPin size={14} className="text-red-500 mt-0.5 shrink-0" />
-                      <p className="text-zinc-400 text-xs leading-relaxed">{sup.address}</p>
+                      <p className="text-zinc-600 dark:text-zinc-400 text-xs leading-relaxed transition-colors">{sup.address}</p>
                     </div>
                     <div className="flex items-start gap-2.5">
-                      <Map size={14} className="text-[#4DA6FF] mt-0.5 shrink-0" />
-                      <p className="text-zinc-400 text-xs">{sup.lat}, {sup.lng}</p>
+                      <Map size={14} className="text-[#2b8eea] dark:text-[#4DA6FF] mt-0.5 shrink-0" />
+                      <p className="text-zinc-600 dark:text-zinc-400 text-xs transition-colors">{sup.lat}, {sup.lng}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Bottom Button */}
-                <button 
+                <button
                   onClick={() => handleOpenMap(sup.lat, sup.lng, sup.name)}
-                  className="w-full py-2.5 bg-zinc-950 hover:bg-zinc-800 text-zinc-300 text-xs font-bold rounded-lg border border-zinc-800 transition-colors flex justify-center items-center gap-2"
+                  className="w-full py-2.5 bg-zinc-50 dark:bg-zinc-950 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-bold rounded-lg border border-zinc-200 dark:border-zinc-800 transition-colors flex justify-center items-center gap-2 shadow-sm"
                 >
                   <MapPin size={14} className="text-red-500" /> Open in Maps
                 </button>
@@ -178,19 +169,19 @@ export default function SuppliersPage() {
         )}
       </div>
 
-      <SupplierFormModal 
-        isOpen={isFormModalOpen} 
-        onClose={() => setIsFormModalOpen(false)} 
+      <SupplierFormModal
+        isOpen={isFormModalOpen}
+        onClose={() => setIsFormModalOpen(false)}
         mode={formMode}
         initialData={selectedSupplier}
       />
 
-      <DeleteConfirmModal 
+      <DeleteConfirmModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={executeDelete}               
-        itemName={selectedSupplier?.name}        
-        entityName="Supplier"                    
+        onConfirm={executeDelete}
+        itemName={selectedSupplier?.name}
+        entityName="Supplier"
       />
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import Draggable from "react-draggable";
 import { X } from "lucide-react";
 // import Cookies from 'js-cookie'; 
@@ -98,18 +98,18 @@ export default function ProductFormModal({ isOpen, onClose, mode = "add", initia
     <Dialog open={isOpen} onOpenChange={!isLoading ? onClose : undefined}>
       <DialogContent className="bg-transparent border-none shadow-none p-0 max-w-xl [&>button]:hidden">
         <Draggable handle=".drag-area" nodeRef={nodeRef}>
-          <div ref={nodeRef} className="bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden m-0 text-white">
+          <div ref={nodeRef} className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl overflow-hidden m-0 transition-colors">
 
-            <DialogHeader className="p-5 pb-4 border-b border-zinc-800 bg-zinc-900/50 drag-area cursor-move flex flex-row items-start justify-between select-none">
+            <DialogHeader className="p-5 pb-4 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 drag-area cursor-move flex flex-row items-start justify-between select-none transition-colors">
               <div className="text-left mt-0">
-                <DialogTitle className="text-lg font-bold text-white">
+                <DialogTitle className="text-lg font-bold text-zinc-900 dark:text-white transition-colors">
                   {mode === "edit" ? "Edit Product" : "Add New Product"}
                 </DialogTitle>
-                <p className="text-zinc-500 text-xs mt-1">
+                <DialogDescription className="text-zinc-500 dark:text-zinc-400 text-xs mt-1 transition-colors">
                   {mode === "edit" ? "Update product details below" : "Enter required fields to add a new product"}
-                </p>
+                </DialogDescription>
               </div>
-              <button type="button" onClick={onClose} disabled={isLoading} className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors cursor-pointer disabled:opacity-50">
+              <button type="button" onClick={onClose} disabled={isLoading} className="p-1.5 text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-lg transition-colors cursor-pointer disabled:opacity-50">
                 <X size={18} />
               </button>
             </DialogHeader>
@@ -119,30 +119,31 @@ export default function ProductFormModal({ isOpen, onClose, mode = "add", initia
 
                 {/* 1. PRODUCT NAME */}
                 <div className="space-y-1.5">
-                  <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest block">Product Name *</label>
+                  <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest flex justify-between transition-colors">
+                    <span>Product Name *</span> {errors.name && <span className="text-red-500 normal-case tracking-normal">{errors.name}</span>}
+                  </label>
                   <input
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
                     disabled={isLoading}
-                    // Tambahan class placeholder:text-red-400 jika error
-                    className={`w-full bg-zinc-900/50 rounded-lg px-3 py-2 text-sm focus:outline-none transition-colors disabled:opacity-50 ${errors.name ? 'border-red-500 border focus:border-red-500 placeholder:text-red-500/70' : 'border border-zinc-800 focus:border-[#00E599]'}`}
-                    // Dynamic Placeholder
+                    className={`w-full bg-zinc-50 dark:bg-zinc-900/50 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none transition-colors disabled:opacity-50 ${errors.name ? 'border-red-500 border focus:border-red-500 placeholder:text-red-500/70' : 'border border-zinc-200 dark:border-zinc-800 focus:border-[#00E599]'}`}
                     placeholder={errors.name ? errors.name : "e.g. Indomie Goreng"}
                   />
                 </div>
 
                 {/* 2. CATEGORY (Select khusus) */}
                 <div className="space-y-1.5">
-                  <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest block">Category *</label>
+                  <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest flex justify-between transition-colors">
+                    <span>Category *</span> {errors.category && <span className="text-red-500 normal-case tracking-normal">{errors.category}</span>}
+                  </label>
                   <select
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
                     disabled={isLoading}
-                    className={`w-full bg-zinc-900/50 rounded-lg px-3 py-2 text-sm focus:outline-none appearance-none transition-colors disabled:opacity-50 ${errors.category ? 'border-red-500 border text-red-500 focus:border-red-500' : 'border border-zinc-800 text-zinc-300 focus:border-[#00E599]'}`}
+                    className={`w-full bg-zinc-50 dark:bg-zinc-900/50 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-zinc-300 focus:outline-none appearance-none transition-colors disabled:opacity-50 ${errors.category ? 'border-red-500 border text-red-500 focus:border-red-500' : 'border border-zinc-200 dark:border-zinc-800 focus:border-[#00E599]'}`}
                   >
-                    {/* Jika error, ubah teks opsi defaultnya */}
                     <option value="" disabled hidden>{errors.category ? "⚠️ Select a category!" : "Select category..."}</option>
                     <option value="Makanan">Makanan</option>
                     <option value="Minuman">Minuman</option>
@@ -153,78 +154,88 @@ export default function ProductFormModal({ isOpen, onClose, mode = "add", initia
 
                 {/* 3. BUY PRICE */}
                 <div className="space-y-1.5">
-                  <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest block">Buy Price (Rp) *</label>
+                  <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest flex justify-between transition-colors">
+                    <span>Buy Price (Rp) *</span> {errors.buy && <span className="text-red-500 normal-case tracking-normal">{errors.buy}</span>}
+                  </label>
                   <input
                     name="buy" type="number"
                     value={formData.buy}
                     onChange={handleChange}
                     disabled={isLoading}
-                    className={`w-full bg-zinc-900/50 rounded-lg px-3 py-2 text-sm focus:outline-none transition-colors disabled:opacity-50 ${errors.buy ? 'border-red-500 border focus:border-red-500 placeholder:text-red-500/70' : 'border border-zinc-800 focus:border-[#00E599]'}`}
+                    className={`w-full bg-zinc-50 dark:bg-zinc-900/50 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none transition-colors disabled:opacity-50 ${errors.buy ? 'border-red-500 border focus:border-red-500 placeholder:text-red-500/70' : 'border border-zinc-200 dark:border-zinc-800 focus:border-[#00E599]'}`}
                     placeholder={errors.buy ? errors.buy : "0"}
                   />
                 </div>
 
                 {/* 4. SELL PRICE */}
                 <div className="space-y-1.5">
-                  <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest block">Sell Price (Rp) *</label>
+                  <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest flex justify-between transition-colors">
+                    <span>Sell Price (Rp) *</span> {errors.sell && <span className="text-red-500 normal-case tracking-normal">{errors.sell}</span>}
+                  </label>
                   <input
                     name="sell" type="number"
                     value={formData.sell}
                     onChange={handleChange}
                     disabled={isLoading}
-                    className={`w-full bg-zinc-900/50 rounded-lg px-3 py-2 text-sm focus:outline-none transition-colors disabled:opacity-50 ${errors.sell ? 'border-red-500 border focus:border-red-500 placeholder:text-red-500/70' : 'border border-zinc-800 focus:border-[#00E599]'}`}
+                    className={`w-full bg-zinc-50 dark:bg-zinc-900/50 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none transition-colors disabled:opacity-50 ${errors.sell ? 'border-red-500 border focus:border-red-500 placeholder:text-red-500/70' : 'border border-zinc-200 dark:border-zinc-800 focus:border-[#00E599]'}`}
                     placeholder={errors.sell ? errors.sell : "0"}
                   />
                 </div>
 
                 {/* 5. INITIAL STOCK */}
                 <div className="space-y-1.5">
-                  <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest block">Initial Stock *</label>
+                  <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest flex justify-between transition-colors">
+                    <span>Initial Stock *</span> {errors.stock && <span className="text-red-500 normal-case tracking-normal">{errors.stock}</span>}
+                  </label>
                   <input
                     name="stock" type="number"
                     value={formData.stock}
                     onChange={handleChange}
                     disabled={isLoading}
-                    className={`w-full bg-zinc-900/50 rounded-lg px-3 py-2 text-sm focus:outline-none transition-colors disabled:opacity-50 ${errors.stock ? 'border-red-500 border focus:border-red-500 placeholder:text-red-500/70' : 'border border-zinc-800 focus:border-[#00E599]'}`}
+                    className={`w-full bg-zinc-50 dark:bg-zinc-900/50 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none transition-colors disabled:opacity-50 ${errors.stock ? 'border-red-500 border focus:border-red-500 placeholder:text-red-500/70' : 'border border-zinc-200 dark:border-zinc-800 focus:border-[#00E599]'}`}
                     placeholder={errors.stock ? errors.stock : "0"}
                   />
                 </div>
 
                 {/* 6. UNIT */}
                 <div className="space-y-1.5">
-                  <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest block">Unit *</label>
+                  <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest flex justify-between transition-colors">
+                    <span>Unit *</span> {errors.unit && <span className="text-red-500 normal-case tracking-normal">{errors.unit}</span>}
+                  </label>
                   <input
                     name="unit"
                     value={formData.unit}
                     onChange={handleChange}
                     disabled={isLoading}
-                    className={`w-full bg-zinc-900/50 rounded-lg px-3 py-2 text-sm focus:outline-none transition-colors disabled:opacity-50 ${errors.unit ? 'border-red-500 border focus:border-red-500 placeholder:text-red-500/70' : 'border border-zinc-800 focus:border-[#00E599]'}`}
+                    className={`w-full bg-zinc-50 dark:bg-zinc-900/50 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none transition-colors disabled:opacity-50 ${errors.unit ? 'border-red-500 border focus:border-red-500 placeholder:text-red-500/70' : 'border border-zinc-200 dark:border-zinc-800 focus:border-[#00E599]'}`}
                     placeholder={errors.unit ? errors.unit : "e.g. pcs, btl, kg"}
                   />
                 </div>
 
                 {/* 7. MINIMUM STOCK */}
                 <div className="space-y-1.5">
-                  <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest block">Min Stock Alert *</label>
+                  <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest flex justify-between transition-colors">
+                    <span>Min Stock Alert *</span> {errors.min && <span className="text-red-500 normal-case tracking-normal">{errors.min}</span>}
+                  </label>
                   <input
                     name="min" type="number"
                     value={formData.min}
                     onChange={handleChange}
                     disabled={isLoading}
-                    className={`w-full bg-zinc-900/50 rounded-lg px-3 py-2 text-sm focus:outline-none transition-colors disabled:opacity-50 ${errors.min ? 'border-red-500 border focus:border-red-500 placeholder:text-red-500/70' : 'border border-zinc-800 focus:border-[#00E599]'}`}
+                    className={`w-full bg-zinc-50 dark:bg-zinc-900/50 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none transition-colors disabled:opacity-50 ${errors.min ? 'border-red-500 border focus:border-red-500 placeholder:text-red-500/70' : 'border border-zinc-200 dark:border-zinc-800 focus:border-[#00E599]'}`}
                     placeholder={errors.min ? errors.min : "0"}
                   />
                 </div>
 
                 {/* SUPPLIER (Optional) */}
                 <div className="space-y-1.5">
-                  <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest block">Supplier (Optional)</label>
+                  <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">Supplier (Optional)</label>
                   <select
                     name="supplier"
                     value={formData.supplier || ''}
                     onChange={handleChange}
                     disabled={isLoading}
-                    className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#00E599] text-zinc-300 appearance-none disabled:opacity-50"
+                    className="w-full bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-zinc-300 focus:outline-none focus:border-[#00E599] appearance-none disabled:opacity-50 transition-colors"
                   >
                     <option value="" disabled hidden>Select supplier...</option>
                     <option value="PT Indofood">PT Indofood</option>
@@ -235,22 +246,22 @@ export default function ProductFormModal({ isOpen, onClose, mode = "add", initia
 
               {/* NOTES (Optional) */}
               <div className="space-y-1.5">
-                <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest block">Notes (Optional)</label>
+                <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">Notes (Optional)</label>
                 <textarea
                   name="notes"
                   value={formData.notes || ''}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#00E599] min-h-[60px] resize-none disabled:opacity-50"
+                  className="w-full bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-[#00E599] min-h-[60px] resize-none disabled:opacity-50 transition-colors"
                   placeholder="Additional notes..."
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-zinc-800/50 mt-2">
-                <button type="button" onClick={onClose} disabled={isLoading} className="px-5 py-2 rounded-lg text-xs font-bold bg-zinc-900 text-zinc-400 border border-zinc-800 hover:bg-zinc-800 transition-colors cursor-pointer disabled:opacity-50">
+              <div className="flex justify-end gap-3 pt-4 border-t border-zinc-200 dark:border-zinc-800/50 mt-2 transition-colors">
+                <button type="button" onClick={onClose} disabled={isLoading} className="px-5 py-2 rounded-lg text-xs font-bold bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer disabled:opacity-50 shadow-sm">
                   Cancel
                 </button>
-                <button type="submit" disabled={isLoading} className="px-5 py-2 rounded-lg text-xs font-bold bg-[#00E599] text-zinc-950 hover:bg-[#00c985] transition-colors cursor-pointer flex items-center gap-2 disabled:opacity-70">
+                <button type="submit" disabled={isLoading} className="px-5 py-2 rounded-lg text-xs font-bold bg-[#00E599] text-zinc-950 hover:bg-[#00c985] transition-colors cursor-pointer flex items-center gap-2 disabled:opacity-70 shadow-sm">
                   {isLoading ? <span className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin"></span> : null}
                   {isLoading ? "Saving..." : (mode === "edit" ? "Save Changes" : "Save Product")}
                 </button>
