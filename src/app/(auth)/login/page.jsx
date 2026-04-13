@@ -26,17 +26,6 @@ export default function LoginPage() {
   // Uncomment kalau backend ready
   // const { login, isLoading: apiLoading, error: apiError } = useLogin();
 
-  // --- LOGIKA MEMBACA TEMA DARI HISTORI BROWSER ---
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("stockmate_theme");
-    if (savedTheme === "light") {
-      document.documentElement.classList.remove("dark");
-    } else {
-      // Default ke dark mode jika belum ada history, atau jika history-nya 'dark'
-      document.documentElement.classList.add("dark");
-    }
-  }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 

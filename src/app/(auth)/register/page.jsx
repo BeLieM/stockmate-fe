@@ -31,16 +31,6 @@ export default function RegisterPage() {
 
     // const { register, isLoading: apiLoading, error: apiError } = useAuth();
 
-    // --- LOGIKA MEMBACA TEMA DARI HISTORI BROWSER ---
-    useEffect(() => {
-        const savedTheme = localStorage.getItem("stockmate_theme");
-        if (savedTheme === "light") {
-            document.documentElement.classList.remove("dark");
-        } else {
-            document.documentElement.classList.add("dark");
-        }
-    }, []);
-
     const handleInputChange = (field) => (e) => {
         setFormData((prev) => ({ ...prev, [field]: e.target.value }));
         if (fieldErrors[field]) {

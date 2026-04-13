@@ -12,14 +12,6 @@ export default function ForgotPasswordPage() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("stockmate_theme");
-    if (savedTheme === "light") {
-      document.documentElement.classList.remove("dark");
-    } else {
-      document.documentElement.classList.add("dark");
-    }
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
