@@ -1,83 +1,59 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { 
-  Package, ArrowUpDown, AlertTriangle, Target, ArrowRight,
-  ArrowUp, ArrowDown 
-} from 'lucide-react';
+import React, { useEffect } from 'react';
+import { Package, ArrowUpDown, AlertTriangle, Target, ArrowRight, ArrowUp, ArrowDown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
-// --- IMPORT RECHARTS ---
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, YAxis } from 'recharts';
+import { useDashboard } from '@/hooks/useDashboard';
 
 export default function DashboardPage() {
-  /* import Cookies from 'js-cookie';
-     
-     const [apiData, setApiData] = useState(null);
-     const [isLoading, setIsLoading] = useState(true);
+  const { 
+    stats, chartData, criticalStocks, recentTransactions, isLoading, fetchDashboardData 
+  } = useDashboard();
 
-     useEffect(() => {
-       const fetchDashboardData = async () => {
-         try {
-           const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-           const token = Cookies.get("stockmate_token"); // Ambil token dari cookie
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
-           const response = await fetch(`${API_URL}/dashboard/overview`, {
-             headers: {
-               "Authorization": `Bearer ${token}`,
-               "Content-Type": "application/json"
-             }
-           });
+  if (isLoading) {
+    return (
+      <div className="flex h-[80vh] items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <span className="w-8 h-8 border-4 border-[#00E599]/30 border-t-[#00E599] rounded-full animate-spin"></span>
+          <p className="text-zinc-500 dark:text-zinc-400 font-medium text-sm">Memuat data dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
-           if (!response.ok) throw new Error("Gagal mengambil data dashboard");
-
-           const result = await response.json();
-           setApiData(result.data); // Asumsi backend mereturn { data: { statCards, chartData, ... } }
-         } catch (error) {
-           console.error(error);
-         } finally {
-           setIsLoading(false);
-         }
-       };
-
-       fetchDashboardData();
-     }, []);
-
-     // Nanti saat API siap, ganti variabel dummy di bawah dengan data dari `apiData` */
-
-  // --- DATA DUMMY (Sudah disesuaikan class warnanya untuk Light/Dark Mode) ---
   const statCards = [
-    { title: "TOTAL PRODUCTS", value: "8", subteks: "2 categories critical", icon: Package, iconColor: "text-[#00c985] dark:text-[#00E599]" },
-    { title: "TRANSACTIONS TODAY", value: "14", subteks: "+3 from yesterday", icon: ArrowUpDown, iconColor: "text-[#2b8eea] dark:text-[#4DA6FF]" },
-    { title: "CRITICAL STOCK", value: "2", subteks: "Needs immediate action", icon: AlertTriangle, iconColor: "text-red-600 dark:text-red-500" },
-    { title: "ACTIVE SUPPLIERS", value: "3", subteks: "All reachable", icon: Target, iconColor: "text-yellow-600 dark:text-yellow-500" },
+    { title: "TOTAL PRODUCTS", value: stats.totalProducts, subteks: "Registered in system", icon: Package, iconColor: "text-[#00c985] dark:text-[#00E599]" },
+    { 
+      title: "TRANSACTIONS TODAY", 
+      value: stats.transactionsToday, 
+      subteks: stats.transactionDiff ? `${stats.transactionDiff} from yesterday` : "Today's activity", 
+      icon: ArrowUpDown, 
+      iconColor: "text-[#2b8eea] dark:text-[#4DA6FF]" 
+    },
+    { title: "CRITICAL STOCK", value: stats.criticalStock, subteks: "Needs immediate action", icon: AlertTriangle, iconColor: "text-red-600 dark:text-red-500" },
+    { title: "ACTIVE SUPPLIERS", value: stats.activeSuppliers, subteks: "Registered suppliers", icon: Target, iconColor: "text-yellow-600 dark:text-yellow-500" },
   ];
 
-  const criticalStockAlerts = [
-    { product: "Mie Instan Goreng", stock: 4, min: 20, status: "Critical", textClass: "text-red-600 dark:text-red-500", badgeClass: "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-500", progressClass: "bg-red-500" },
-    { product: "Deterjen Rinso", stock: 3, min: 12, status: "Critical", textClass: "text-red-600 dark:text-red-500", badgeClass: "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-500", progressClass: "bg-red-500" },
-    { product: "Kopi Kapal Api", stock: 12, min: 15, status: "Low", textClass: "text-yellow-600 dark:text-yellow-500", badgeClass: "bg-yellow-500/10 border-yellow-500/20 text-yellow-600 dark:text-yellow-500", progressClass: "bg-yellow-500" },
-  ];
+  const getAlertStyles = (status) => {
+    if (status === "Critical") {
+      return { text: "text-red-600 dark:text-red-500", badge: "bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-500", progress: "bg-red-500" };
+    }
+    return { text: "text-yellow-600 dark:text-yellow-500", badge: "bg-yellow-500/10 border-yellow-500/20 text-yellow-600 dark:text-yellow-500", progress: "bg-yellow-500" };
+  };
 
-  const recentTransactions = [
-    { product: "Mie Instan Goreng", type: "OUT", typeColor: "text-[#2b8eea] dark:text-[#4DA6FF]", badgeClass: "bg-[#4DA6FF]/10 border-[#4DA6FF]/20 text-[#2b8eea] dark:text-[#4DA6FF]", qty: "-24", staff: "Andi", time: "10:32 • 02 Mar 2026" },
-    { product: "Aqua 600ml", type: "IN", typeColor: "text-[#00c985] dark:text-[#00E599]", badgeClass: "bg-[#00E599]/10 border-[#00E599]/20 text-[#00c985] dark:text-[#00E599]", qty: "+120", staff: "Budi", time: "09:14 • 02 Mar 2026" },
-    { product: "Deterjen Rinso", type: "OUT", typeColor: "text-[#2b8eea] dark:text-[#4DA6FF]", badgeClass: "bg-[#4DA6FF]/10 border-[#4DA6FF]/20 text-[#2b8eea] dark:text-[#4DA6FF]", qty: "-5", staff: "Andi", time: "08:55 • 02 Mar 2026" },
-    { product: "Gula Pasir 1kg", type: "IN", typeColor: "text-[#00c985] dark:text-[#00E599]", badgeClass: "bg-[#00E599]/10 border-[#00E599]/20 text-[#00c985] dark:text-[#00E599]", qty: "+30", staff: "Citra", time: "11:00 • 01 Mar 2026" },
-  ];
+  const getTxStyles = (type) => {
+    if (type === "IN") {
+      return { icon: ArrowUp, color: "text-[#00c985] dark:text-[#00E599]", badge: "bg-[#00E599]/10 border-[#00E599]/20 text-[#00c985] dark:text-[#00E599]" };
+    }
+    return { icon: ArrowDown, color: "text-[#2b8eea] dark:text-[#4DA6FF]", badge: "bg-[#4DA6FF]/10 border-[#4DA6FF]/20 text-[#2b8eea] dark:text-[#4DA6FF]" };
+  };
 
-  const chartData = [
-    { day: "Mon", in: 40, out: 60 },
-    { day: "Tue", in: 70, out: 40 },
-    { day: "Wed", in: 40, out: 50 },
-    { day: "Thu", in: 65, out: 60 },
-    { day: "Fri", in: 30, out: 70 },
-    { day: "Sat", in: 80, out: 60 },
-    { day: "Sun", in: 30, out: 40 },
-  ];
-
-  // Custom Tooltip: Ditambahkan bg-white untuk Light Mode
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
@@ -151,20 +127,9 @@ export default function DashboardPage() {
             <div className="w-full h-40 mt-2">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} margin={{ top: 10, right: 0, left: 0, bottom: 0 }} barGap={8}>
-                  <XAxis 
-                    dataKey="day" 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{ fill: '#71717a', fontSize: 12 }} 
-                    dy={10} 
-                  />
+                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#71717a', fontSize: 12 }} dy={10} />
                   <YAxis hide={true} />
-                  
-                  <Tooltip 
-                    content={<CustomTooltip />} 
-                    cursor={{ fill: '#a1a1aa', opacity: 0.1 }} 
-                  />
-                  
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: '#a1a1aa', opacity: 0.1 }} />
                   <Bar dataKey="in" name="Stock In" fill="#00E599" radius={[4, 4, 0, 0]} barSize={16} />
                   <Bar dataKey="out" name="Stock Out" fill="#4DA6FF" radius={[4, 4, 0, 0]} barSize={16} />
                 </BarChart>
@@ -180,24 +145,35 @@ export default function DashboardPage() {
             <p className="text-zinc-500 dark:text-zinc-400 text-xs mt-0.5">Requires immediate restock</p>
           </CardHeader>
           <CardContent className="space-y-2">
-            {criticalStockAlerts.map((alert, index) => (
-              <div key={index} className="border border-zinc-200 dark:border-zinc-800 rounded-xl p-2.5 bg-zinc-50 dark:bg-zinc-950 transition-colors">
-                <div className="flex flex-row items-center justify-between mb-2">
-                  <div className="flex flex-col">
-                    <p className="text-zinc-900 dark:text-white text-sm font-semibold transition-colors">{alert.product}</p>
-                    <p className="text-zinc-500 dark:text-zinc-400 text-[11px]">
-                      Stock: <span className={alert.textClass}>{alert.stock}</span> / min {alert.min} pcs
-                    </p>
-                  </div>
-                  <div className={`text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md border ${alert.badgeClass}`}>
-                    {alert.status}
-                  </div>
-                </div>
-                <div className="w-full h-1.5 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden transition-colors">
-                  <div style={{ width: `${(alert.stock / alert.min) * 100}%` }} className={`h-full ${alert.progressClass} rounded-full`}></div>
-                </div>
+            {criticalStocks.length === 0 ? (
+              <div className="text-center py-8 text-zinc-500 text-sm">
+                No critical stock alerts. All good!
               </div>
-            ))}
+            ) : (
+              criticalStocks.map((alert, index) => {
+                const styles = getAlertStyles(alert.status);
+                const progressWidth = Math.min((alert.stock / alert.min) * 100, 100);
+
+                return (
+                  <div key={index} className="border border-zinc-200 dark:border-zinc-800 rounded-xl p-2.5 bg-zinc-50 dark:bg-zinc-950 transition-colors">
+                    <div className="flex flex-row items-center justify-between mb-2">
+                      <div className="flex flex-col">
+                        <p className="text-zinc-900 dark:text-white text-sm font-semibold transition-colors">{alert.product}</p>
+                        <p className="text-zinc-500 dark:text-zinc-400 text-[11px]">
+                          Stock: <span className={styles.text}>{alert.stock}</span> / min {alert.min}
+                        </p>
+                      </div>
+                      <div className={`text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md border ${styles.badge}`}>
+                        {alert.status}
+                      </div>
+                    </div>
+                    <div className="w-full h-1.5 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden transition-colors">
+                      <div style={{ width: `${progressWidth}%` }} className={`h-full ${styles.progress} rounded-full`}></div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </CardContent>
         </Card>
       </div>
@@ -207,9 +183,6 @@ export default function DashboardPage() {
         <CardHeader className="pb-2 shrink-0">
           <div className="flex flex-row items-center justify-between">
             <CardTitle className="text-zinc-900 dark:text-white text-base font-semibold transition-colors">Recent Transactions</CardTitle>
-            <button className="flex items-center gap-1.5 text-[#00c985] dark:text-[#00E599] text-xs hover:underline font-medium">
-              View all <ArrowRight size={14} />
-            </button>
           </div>
         </CardHeader>
         <CardContent className="overflow-y-auto">
@@ -224,23 +197,33 @@ export default function DashboardPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {recentTransactions.map((tx, index) => {
-                const TypeIcon = tx.type === "IN" ? ArrowUp : ArrowDown;
-                return (
-                  <TableRow key={index} className="border-b border-zinc-100 dark:border-zinc-800/50 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
-                    <TableCell className="text-sm font-medium py-4 text-zinc-900 dark:text-white transition-colors">{tx.product}</TableCell>
-                    <TableCell className="py-4">
-                        <div className={`flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md border w-fit ${tx.badgeClass}`}>
-                            <TypeIcon size={12} strokeWidth={3} />
-                            {tx.type}
-                        </div>
-                    </TableCell>
-                    <TableCell className={`text-sm font-bold py-4 ${tx.typeColor}`}>{tx.qty}</TableCell>
-                    <TableCell className="text-zinc-600 dark:text-zinc-400 text-sm font-medium py-4 transition-colors">{tx.staff}</TableCell>
-                    <TableCell className="text-zinc-500 dark:text-zinc-400 text-xs font-mono py-4 transition-colors">{tx.time}</TableCell>
-                  </TableRow>
-                );
-              })}
+              {recentTransactions.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-8 text-zinc-500 dark:text-zinc-500">
+                    No recent transactions available.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                recentTransactions.map((tx, index) => {
+                  const styles = getTxStyles(tx.type);
+                  const TypeIcon = styles.icon;
+                  
+                  return (
+                    <TableRow key={index} className="border-b border-zinc-100 dark:border-zinc-800/50 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
+                      <TableCell className="text-sm font-medium py-4 text-zinc-900 dark:text-white transition-colors">{tx.product}</TableCell>
+                      <TableCell className="py-4">
+                          <div className={`flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md border w-fit ${styles.badge}`}>
+                              <TypeIcon size={12} strokeWidth={3} />
+                              {tx.type}
+                          </div>
+                      </TableCell>
+                      <TableCell className={`text-sm font-bold py-4 ${styles.color}`}>{tx.qty}</TableCell>
+                      <TableCell className="text-zinc-600 dark:text-zinc-400 text-sm font-medium py-4 transition-colors">{tx.staff}</TableCell>
+                      <TableCell className="text-zinc-500 dark:text-zinc-400 text-xs font-mono py-4 transition-colors">{tx.time}</TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
             </TableBody>
           </Table>
         </CardContent>

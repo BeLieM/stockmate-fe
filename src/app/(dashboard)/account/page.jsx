@@ -2,86 +2,65 @@
 
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-// import Cookies from 'js-cookie'; // Uncomment untuk API Production
+import { useAccount } from "@/hooks/useAccount";
+import { useAuth } from "@/hooks/useAuth";
+import { useStore } from "@/hooks/useStore";
 
 export default function AccountPage() {
-  const [isLoading, setIsLoading] = useState(true);
+  const { profile, isLoading: isProfileLoading, fetchProfile, updateProfile, updatePassword } = useAccount();
+  const { storeData, isLoading: isStoreLoading, updateStore } = useStore();
+  const { logout } = useAuth();
 
-  // State untuk Personal Information
   const [profileData, setProfileData] = useState({
     fullName: "",
     email: "",
-    storeName: "",
-    storeAddress: "",
-    role: "Owner",
-    initials: "MA",
-    joinedDate: "Jan 2026"
+    storeName: "Loading...",
+    storeAddress: "-",
+    role: "User",
+    initials: "XX",
+    joinedDate: "-"
   });
 
-  // State untuk Change Password
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: ""
   });
 
-  /* ==========================================
-     KODE API PRODUCTION (GET PROFILE)
-     ========================================== */
-  /*
-  const fetchProfileAPI = async () => {
-    try {
-      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const token = Cookies.get("stockmate_token");
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [isSavingPassword, setIsSavingPassword] = useState(false);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  useEffect(() => {
+    if (profile || storeData.name !== "Loading...") {
+      const name = profile?.name || profile?.full_name || profileData.fullName || "Unknown";
+      const initial = name.charAt(0).toUpperCase();
+
+      let joined = profileData.joinedDate;
+      const rawDate = profile?.created_at || storeData?.created_at;
       
-      const response = await fetch(`${API_URL}/user/profile`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      
-      if (!response.ok) throw new Error("Gagal mengambil data profil");
-      
-      const data = await response.json();
+      if (rawDate) {
+        const dateObj = new Date(rawDate);
+        if (!isNaN(dateObj.getTime())) {
+          joined = dateObj.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+        }
+      }
+
       setProfileData({
-        fullName: data.full_name,
-        email: data.email,
-        storeName: data.store_name,
-        storeAddress: data.store_address,
-        role: data.role,
-        initials: data.initials,
-        joinedDate: data.joined_date
+        fullName: name,
+        email: profile?.email || profileData.email || "",
+        storeName: storeData.name !== "Loading..." ? storeData.name : profileData.storeName,
+        storeAddress: storeData.address !== "-" ? storeData.address : profileData.storeAddress,
+        role: profile?.role || "User",
+        initials: initial,
+        joinedDate: joined
       });
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [profile, storeData]);
 
-  useEffect(() => {
-    fetchProfileAPI();
-  }, []);
-  */
-
-  /* ==========================================
-     KODE DUMMY (UNTUK SLICING SAAT INI)
-     ========================================== */
-  useEffect(() => {
-    // Simulasi loading data dari database
-    setTimeout(() => {
-      setProfileData({
-        fullName: "Marcel Adrian Siring",
-        email: "marcellno@tokoberkahjaya.id",
-        storeName: "Toko Berkah Jaya",
-        storeAddress: "Jl. Merdeka No. 1, Jakarta",
-        role: "Owner",
-        initials: "MA",
-        joinedDate: "Jan 2026"
-      });
-      setIsLoading(false);
-    }, 500); // delay 0.5 detik
-  }, []);
-
-  // Handler untuk form input
   const handleProfileChange = (e) => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
   };
@@ -90,67 +69,71 @@ export default function AccountPage() {
     setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
   };
 
-  /* ==========================================
-     LOGIKA SUBMIT (DUMMY & API)
-     ========================================== */
   const handleSaveProfile = async (e) => {
     e.preventDefault();
-    console.log("[SLICING MODE] Saving Profile:", profileData);
+    setIsSavingProfile(true);
 
-    /* // KODE API UPDATE PROFILE
-    try {
-      const token = Cookies.get("stockmate_token");
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/profile`, {
-        method: "PUT",
-        headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify(profileData)
-      });
-      if (!response.ok) throw new Error("Failed to update profile");
-      alert("Profile updated successfully!");
-    } catch (error) {
-      alert(error.message);
+    let isSuccess = true;
+
+    const profilePayload = {
+      name: profileData.fullName,
+      email: profileData.email
+    };
+    
+    const profileSuccess = await updateProfile(profilePayload);
+    if (!profileSuccess) isSuccess = false;
+
+    if (storeData && storeData.id) {
+      const storePayload = {
+        name: profileData.storeName,
+        address: profileData.storeAddress
+      };
+      const storeSuccess = await updateStore(storeData.id, storePayload);
+      if (!storeSuccess) isSuccess = false;
     }
-    */
+
+    if (isSuccess) {
+      alert("Profil dan Toko berhasil diperbarui!");
+    } else {
+      alert("Ada kesalahan saat memperbarui sebagian data. Periksa koneksi Anda.");
+    }
+
+    setIsSavingProfile(false);
   };
 
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
+
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert("New Password and Confirm Password do not match!");
+      alert("Password baru dan konfirmasi password tidak cocok!");
       return;
     }
-    console.log("[SLICING MODE] Updating Password...", passwordData);
-    setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" }); // Reset form
 
-    /* // KODE API UPDATE PASSWORD
-    try {
-      const token = Cookies.get("stockmate_token");
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/password`, {
-        method: "PUT",
-        headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          current_password: passwordData.currentPassword,
-          new_password: passwordData.newPassword
-        })
-      });
-      if (!response.ok) throw new Error("Failed to update password");
-      alert("Password updated successfully!");
-    } catch (error) {
-      alert(error.message);
+    setIsSavingPassword(true);
+
+    const payload = {
+      password_hash: passwordData.newPassword
+    };
+
+    const success = await updatePassword(payload);
+
+    if (success) {
+      alert("Password berhasil diperbarui!");
+      setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+    } else {
+      alert("Gagal memperbarui password.");
     }
-    */
+
+    setIsSavingPassword(false);
   };
 
   const handleSignOut = () => {
-    console.log("[SLICING MODE] Signing out...");
-
-    /* // KODE API/LOGIC SIGN OUT
-    Cookies.remove("stockmate_token");
-    window.location.href = "/login"; // Redirect ke halaman login
-    */
+    if (logout) {
+      logout();
+    }
   };
 
-  if (isLoading) {
+  if ((isProfileLoading && !profile) || (isStoreLoading && storeData.name === "Loading...")) {
     return <div className="h-full flex items-center justify-center text-zinc-500 dark:text-zinc-400">Loading profile data...</div>;
   }
 
@@ -158,9 +141,7 @@ export default function AccountPage() {
     <div className="h-full flex flex-col overflow-y-auto custom-scrollbar pb-6 pr-2">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {/* ================= KOLOM KIRI ================= */}
         <div className="space-y-6">
-          {/* PROFILE CARD */}
           <Card className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 p-6 flex flex-col items-center text-center transition-colors shadow-sm">
             <div className="w-24 h-24 bg-[#00c985] dark:bg-[#00E599] rounded-full flex items-center justify-center text-white dark:text-zinc-950 font-bold text-3xl mb-4 transition-colors">
               {profileData.initials}
@@ -172,7 +153,6 @@ export default function AccountPage() {
             </div>
           </Card>
 
-          {/* STORE INFO CARD */}
           <Card className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 p-6 transition-colors shadow-sm">
             <h4 className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest mb-3 transition-colors">Store Info</h4>
             <div className="space-y-1 mb-4">
@@ -186,10 +166,8 @@ export default function AccountPage() {
           </Card>
         </div>
 
-        {/* ================= KOLOM KANAN ================= */}
         <div className="lg:col-span-2 space-y-6">
 
-          {/* PERSONAL INFO FORM */}
           <Card className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 p-6 transition-colors shadow-sm">
             <div className="mb-6">
               <h3 className="text-zinc-900 dark:text-white font-bold text-lg transition-colors">Personal Information</h3>
@@ -201,41 +179,41 @@ export default function AccountPage() {
                 <div className="space-y-1.5">
                   <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">Full Name</label>
                   <input
-                    name="fullName" value={profileData.fullName} onChange={handleProfileChange}
-                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors"
+                    name="fullName" value={profileData.fullName} onChange={handleProfileChange} disabled={isSavingProfile}
+                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors disabled:opacity-50"
                   />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">Email Address</label>
                   <input
-                    name="email" type="email" value={profileData.email} onChange={handleProfileChange}
-                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors"
+                    name="email" type="email" value={profileData.email} onChange={handleProfileChange} disabled={isSavingProfile}
+                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors disabled:opacity-50"
                   />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">Store Name</label>
                   <input
-                    name="storeName" value={profileData.storeName} onChange={handleProfileChange}
-                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors"
+                    name="storeName" value={profileData.storeName} onChange={handleProfileChange} disabled={isSavingProfile}
+                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors disabled:opacity-50"
                   />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">Store Address</label>
                   <input
-                    name="storeAddress" value={profileData.storeAddress} onChange={handleProfileChange}
-                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors"
+                    name="storeAddress" value={profileData.storeAddress} onChange={handleProfileChange} disabled={isSavingProfile}
+                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors disabled:opacity-50"
                   />
                 </div>
               </div>
               <div className="flex justify-end pt-2">
-                <button type="submit" className="bg-[#00E599] text-zinc-950 px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-[#00c985] transition-colors cursor-pointer shadow-sm">
-                  Save Changes
+                <button type="submit" disabled={isSavingProfile} className="bg-[#00E599] text-zinc-950 px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-[#00c985] transition-colors cursor-pointer shadow-sm disabled:opacity-70 flex items-center gap-2">
+                  {isSavingProfile ? <span className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin"></span> : null}
+                  {isSavingProfile ? "Saving..." : "Save Changes"}
                 </button>
               </div>
             </form>
           </Card>
 
-          {/* CHANGE PASSWORD FORM */}
           <Card className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 p-6 transition-colors shadow-sm">
             <div className="mb-6">
               <h3 className="text-zinc-900 dark:text-white font-bold text-lg transition-colors">Change Password</h3>
@@ -246,8 +224,8 @@ export default function AccountPage() {
               <div className="space-y-1.5">
                 <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">Current Password</label>
                 <input
-                  name="currentPassword" type="password" value={passwordData.currentPassword} onChange={handlePasswordChange}
-                  className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors"
+                  name="currentPassword" type="password" value={passwordData.currentPassword} onChange={handlePasswordChange} disabled={isSavingPassword}
+                  className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors disabled:opacity-50"
                   placeholder="••••••••" required
                 />
               </div>
@@ -255,29 +233,29 @@ export default function AccountPage() {
                 <div className="space-y-1.5">
                   <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">New Password</label>
                   <input
-                    name="newPassword" type="password" value={passwordData.newPassword} onChange={handlePasswordChange}
-                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors"
+                    name="newPassword" type="password" value={passwordData.newPassword} onChange={handlePasswordChange} disabled={isSavingPassword}
+                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors disabled:opacity-50"
                     placeholder="••••••••" required
                   />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">Confirm New Password</label>
                   <input
-                    name="confirmPassword" type="password" value={passwordData.confirmPassword} onChange={handlePasswordChange}
-                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors"
+                    name="confirmPassword" type="password" value={passwordData.confirmPassword} onChange={handlePasswordChange} disabled={isSavingPassword}
+                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors disabled:opacity-50"
                     placeholder="••••••••" required
                   />
                 </div>
               </div>
               <div className="flex justify-end pt-2">
-                <button type="submit" className="bg-[#00E599] text-zinc-950 px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-[#00c985] transition-colors cursor-pointer shadow-sm">
-                  Update Password
+                <button type="submit" disabled={isSavingPassword} className="bg-[#00E599] text-zinc-950 px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-[#00c985] transition-colors cursor-pointer shadow-sm disabled:opacity-70 flex items-center gap-2">
+                  {isSavingPassword ? <span className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin"></span> : null}
+                  {isSavingPassword ? "Updating..." : "Update Password"}
                 </button>
               </div>
             </form>
           </Card>
 
-          {/* DANGER ZONE */}
           <Card className="bg-red-50 dark:bg-red-500/5 border-red-200 dark:border-red-500/20 p-6 transition-colors shadow-sm">
             <h3 className="text-red-600 dark:text-red-500 font-bold text-lg mb-1 transition-colors">Danger Zone</h3>
             <p className="text-zinc-600 dark:text-zinc-400 text-sm mb-5 transition-colors">Sign out from your account. All unsaved changes will be lost.</p>

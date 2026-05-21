@@ -1,30 +1,20 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Eye, EyeOff } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-
-// Uncomment kalau backend ready
-// import { useAuth } from '@/hooks/useAuth'; 
+import { useAuth } from '@/hooks/useAuth';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
 
   // State menyimpan pesan error berupa string
   const [fieldErrors, setFieldErrors] = useState({ email: null, password: null });
 
-  // --- STATE DUMMY BUAT SLICING ---
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  // ---------------------------------
-
-  // Uncomment kalau backend ready
-  // const { login, isLoading: apiLoading, error: apiError } = useLogin();
+  const { login, isLoading, error, setError } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -58,21 +48,7 @@ export default function LoginPage() {
     // Error dihapus jika lolos validasi
     setFieldErrors({ email: null, password: null });
 
-    // --- LOGIKA BUAT SLICING DOANG ---
-    setIsLoading(true);
-    setError(null);
-
-    setTimeout(() => {
-      console.log("Data siap dikirim ke API:", { email, password });
-      setIsLoading(false);
-      router.push("/home")
-    }, 1500);
-    // ----------------------------------
-
-    // Uncomment kalau backend ready
-    /*
     await login(email, password);
-    */
   };
 
   // Helper function untuk membersihkan error saat user mulai mengetik
@@ -81,10 +57,9 @@ export default function LoginPage() {
     if (fieldErrors[field]) {
       setFieldErrors((prev) => ({ ...prev, [field]: null }));
     }
+    // Bersihkan API error saat user mulai mengetik ulang
+    if (error) setError(null);
   };
-
-  const displayError = error;
-  const displayLoading = isLoading;
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center p-4 font-sans transition-colors duration-200">
@@ -114,9 +89,9 @@ export default function LoginPage() {
           </div>
 
           <form noValidate onSubmit={handleSubmit} className="space-y-5">
-            {displayError && (
+            {error && (
               <div className="p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/50 rounded-lg text-red-600 dark:text-red-500 text-sm transition-colors">
-                {displayError}
+                {error}
               </div>
             )}
 
@@ -185,10 +160,10 @@ export default function LoginPage() {
             {/* SUBMIT BUTTON */}
             <button
               type="submit"
-              disabled={displayLoading}
+              disabled={isLoading}
               className="w-full bg-[#00E599] text-zinc-950 font-bold rounded-lg py-3 mt-2 hover:bg-[#00c985] transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 cursor-pointer shadow-sm"
             >
-              {displayLoading ? (
+              {isLoading ? (
                 <>
                   <svg className="animate-spin h-5 w-5 text-zinc-950" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>

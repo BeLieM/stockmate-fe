@@ -6,50 +6,25 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card } from "@/components/ui/card";
 import CategoryFormModal from "@/components/categories/CategoryFormModal";
 import DeleteConfirmModal from "@/components/shared/DeleteConfirmModal";
-// import Cookies from 'js-cookie'; 
+import { useCategories } from "@/hooks/useCategories";
 
 export default function CategoriesPage() {
+    const { categories, isLoading, fetchCategories, deleteCategory } = useCategories();
+
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
     const [formMode, setFormMode] = useState("add");
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-    const [categories, setCategories] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
 
-    // --- MOCK API DATA ---
+    // Fetch data saat halaman dimuat
     useEffect(() => {
-        const dummyData = [
-            { id: "001", name: "Makanan", total: 1, created: "01 Jan 2026", description: "" },
-            { id: "002", name: "Minuman", total: 3, created: "01 Jan 2026", description: "" },
-            { id: "003", name: "Kebersihan", total: 2, created: "01 Jan 2026", description: "" },
-            { id: "004", name: "Sembako", total: 2, created: "01 Jan 2026", description: "" },
-        ];
-        setCategories(dummyData);
-    }, []);
-
-    /* // ==========================================
-       // KODE API PRODUCTION (GET)
-       // ==========================================
-    const fetchCategoriesAPI = async () => {
-      try {
-        const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-        const token = Cookies.get("stockmate_token");
-        const response = await fetch(`${API_URL}/categories`, {
-          headers: { "Authorization": `Bearer ${token}` }
-        });
-        if (!response.ok) throw new Error("Fetch failed");
-        const data = await response.json();
-        setCategories(data.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    */
+        fetchCategories();
+    }, [fetchCategories]);
 
     // --- LOGIKA FILTER SEARCH ---
     const filteredCategories = categories.filter((cat) =>
-        cat.name.toLowerCase().includes(searchQuery.toLowerCase())
+        cat.name?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const handleOpenAdd = () => {
@@ -69,15 +44,21 @@ export default function CategoriesPage() {
         setIsDeleteModalOpen(true);
     };
 
-    const executeDelete = () => {
-        console.log("[SLICING MODE] Hapus data kategori API untuk ID:", selectedCategory?.id);
-        // API Call untuk delete diletakkan di sini nantinya
+    const executeDelete = async () => {
+        if (!selectedCategory) return;
+        const success = await deleteCategory(selectedCategory.id);
+        if (success) {
+            setIsDeleteModalOpen(false);
+            setSelectedCategory(null);
+        } else {
+            alert("Gagal menghapus kategori. Pastikan tidak ada produk yang terikat dengan kategori ini.");
+        }
     };
 
     return (
         <div className="h-full flex flex-col overflow-hidden pb-6">
 
-            {/* SEARCH BAR (Header Text Removed, Aligned to Right) */}
+            {/* SEARCH BAR */}
             <div className="flex justify-end mb-6 shrink-0">
                 <div className="relative w-64">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500" size={16} />
@@ -108,50 +89,55 @@ export default function CategoriesPage() {
                                 <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">ID</TableHead>
                                 <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Name</TableHead>
                                 <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Total Products</TableHead>
-                                <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Created Date</TableHead>
                                 <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {filteredCategories.length === 0 ? (
+                            {isLoading ? (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="text-center py-12 text-zinc-500 dark:text-zinc-500 align-middle">
+                                        Loading categories...
+                                    </TableCell>
+                                </TableRow>
+                            ) : filteredCategories.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={5} className="text-center py-12 text-zinc-500 dark:text-zinc-500 align-middle">
                                         No categories found.
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                filteredCategories.map((cat) => (
-                                    <TableRow key={cat.id} className="border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors h-14">
+                                filteredCategories.map((cat) => {
+                                    const totalProducts = cat._count?.products || cat.products?.length || cat.total_products || cat.total || 0;
 
-                                        <TableCell className="text-zinc-500 dark:text-zinc-400 text-xs font-mono align-middle text-center transition-colors">
-                                            #{cat.id}
-                                        </TableCell>
+                                    return (
+                                        <TableRow key={cat.id} className="border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors h-14">
 
-                                        <TableCell className="font-bold text-zinc-900 dark:text-white text-sm align-middle text-center transition-colors">
-                                            {cat.name}
-                                        </TableCell>
+                                            <TableCell className="text-zinc-500 dark:text-zinc-400 text-xs font-mono align-middle text-center transition-colors">
+                                                #{cat.id?.toString().slice(0, 6) || "---"}
+                                            </TableCell>
 
-                                        <TableCell className="text-sm text-zinc-600 dark:text-zinc-400 align-middle text-center transition-colors">
-                                            <span className="text-[#00c985] dark:text-[#00E599] font-bold text-base mr-1">{cat.total}</span>
-                                        </TableCell>
+                                            <TableCell className="font-bold text-zinc-900 dark:text-white text-sm align-middle text-center transition-colors">
+                                                {cat.name}
+                                            </TableCell>
 
-                                        <TableCell className="text-xs text-zinc-600 dark:text-zinc-400 font-medium align-middle text-center transition-colors">
-                                            {cat.created}
-                                        </TableCell>
+                                            <TableCell className="text-sm text-zinc-600 dark:text-zinc-400 align-middle text-center transition-colors">
+                                                <span className="text-[#00c985] dark:text-[#00E599] font-bold text-base mr-1">{totalProducts}</span>
+                                            </TableCell>
 
-                                        <TableCell className="align-middle text-center">
-                                            <div className="flex justify-center gap-2">
-                                                <button onClick={() => handleOpenEdit(cat)} className="p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white bg-white dark:bg-zinc-950 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors border border-zinc-200 dark:border-zinc-800 cursor-pointer shadow-sm">
-                                                    <Edit2 size={14} />
-                                                </button>
-                                                <button onClick={() => handleOpenDelete(cat)} className="p-2 text-red-500/80 hover:text-red-600 dark:hover:text-red-500 bg-white dark:bg-zinc-950 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors border border-red-200 dark:border-red-500/20 hover:border-red-300 dark:hover:border-red-500/50 cursor-pointer shadow-sm">
-                                                    <Trash2 size={14} />
-                                                </button>
-                                            </div>
-                                        </TableCell>
+                                            <TableCell className="align-middle text-center">
+                                                <div className="flex justify-center gap-2">
+                                                    <button onClick={() => handleOpenEdit(cat)} className="p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white bg-white dark:bg-zinc-950 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors border border-zinc-200 dark:border-zinc-800 cursor-pointer shadow-sm">
+                                                        <Edit2 size={14} />
+                                                    </button>
+                                                    <button onClick={() => handleOpenDelete(cat)} className="p-2 text-red-500/80 hover:text-red-600 dark:hover:text-red-500 bg-white dark:bg-zinc-950 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors border border-red-200 dark:border-red-500/20 hover:border-red-300 dark:hover:border-red-500/50 cursor-pointer shadow-sm">
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                </div>
+                                            </TableCell>
 
-                                    </TableRow>
-                                ))
+                                        </TableRow>
+                                    );
+                                })
                             )}
                         </TableBody>
                     </Table>
@@ -163,6 +149,7 @@ export default function CategoriesPage() {
                 onClose={() => setIsFormModalOpen(false)}
                 mode={formMode}
                 initialData={selectedCategory}
+                onSuccess={fetchCategories}
             />
 
             <DeleteConfirmModal

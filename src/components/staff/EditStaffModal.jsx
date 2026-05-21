@@ -6,21 +6,27 @@ import Draggable from "react-draggable";
 import { X, Info } from "lucide-react";
 import { useStaff } from "@/hooks/useStaff";
 
-export default function StaffFormModal({ isOpen, onClose, onSuccess }) {
+export default function EditStaffModal({ isOpen, onClose, staffData, onSuccess }) {
   const nodeRef = useRef(null);
-  const { addStaff } = useStaff();
+  const { updateStaff } = useStaff();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    fullName: '', email: '', password: '', confirmPassword: ''
+    fullName: '', email: '', password: '', confirmPassword: '', role: 'Staff'
   });
 
   useEffect(() => {
-    if (isOpen) {
-      setFormData({ fullName: '', email: '', password: '', confirmPassword: '' });
+    if (isOpen && staffData) {
+      setFormData({ 
+        fullName: staffData.name || '', 
+        email: staffData.email || '', 
+        password: '', 
+        confirmPassword: '',
+        role: staffData.role || 'Staff'
+      });
       setErrors({});
     }
-  }, [isOpen]);
+  }, [isOpen, staffData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -32,8 +38,12 @@ export default function StaffFormModal({ isOpen, onClose, onSuccess }) {
     let newErrors = {};
     if (!formData.fullName) newErrors.fullName = "Required";
     if (!formData.email) newErrors.email = "Required";
-    if (!formData.password) newErrors.password = "Required";
-    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
+    if (!formData.role) newErrors.role = "Required";
+    
+    // Password opsional saat edit, tapi jika diisi harus cocok
+    if (formData.password && formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = "Passwords do not match";
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -44,25 +54,28 @@ export default function StaffFormModal({ isOpen, onClose, onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (!validateForm() || !staffData) return;
     
     setIsSubmitting(true);
     
     const payload = {
         name: formData.fullName,
         email: formData.email,
-        password: formData.password,
-        role: "Staff" 
+        role: formData.role 
     };
 
-    const success = await addStaff(payload);
+    if (formData.password) {
+        payload.password = formData.password;
+    }
+
+    const success = await updateStaff(staffData.id, payload);
     setIsSubmitting(false);
 
     if (success) {
         if (onSuccess) onSuccess();
         onClose();
     } else {
-        alert("Gagal menambahkan staff. Periksa kembali data atau email yang digunakan.");
+        alert("Gagal mengubah data staff. Periksa kembali koneksi atau data yang digunakan.");
     }
   };
 
@@ -74,8 +87,8 @@ export default function StaffFormModal({ isOpen, onClose, onSuccess }) {
 
             <DialogHeader className="p-5 pb-4 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 drag-area cursor-move flex flex-row items-start justify-between select-none transition-colors">
               <div className="text-left mt-0">
-                <DialogTitle className="text-lg font-bold text-zinc-900 dark:text-white transition-colors">Add New Staff</DialogTitle>
-                <DialogDescription className="text-zinc-500 dark:text-zinc-400 text-xs mt-1 transition-colors">Create a staff account</DialogDescription>
+                <DialogTitle className="text-lg font-bold text-zinc-900 dark:text-white transition-colors">Edit Staff Account</DialogTitle>
+                <DialogDescription className="text-zinc-500 dark:text-zinc-400 text-xs mt-1 transition-colors">Update staff account information</DialogDescription>
               </div>
               <button type="button" onClick={onClose} disabled={isSubmitting} className="p-1.5 text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-lg transition-colors cursor-pointer disabled:opacity-50">
                 <X size={18} />
@@ -85,7 +98,7 @@ export default function StaffFormModal({ isOpen, onClose, onSuccess }) {
             <div className="p-6">
               <div className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 mb-2 transition-colors">
                 <h3 className="text-zinc-900 dark:text-white font-bold text-base mb-1 transition-colors">Staff Account</h3>
-                <p className="text-zinc-500 dark:text-zinc-400 text-xs mb-5 transition-colors">Staff accounts are used to access the StockMate mobile app</p>
+                <p className="text-zinc-500 dark:text-zinc-400 text-xs mb-5 transition-colors">Modify staff details and role</p>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -112,41 +125,31 @@ export default function StaffFormModal({ isOpen, onClose, onSuccess }) {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest flex justify-between transition-colors">
-                        <span>Password *</span> {errors.password && <span className="text-red-500 normal-case tracking-normal">{errors.password}</span>}
+                        <span>New Password</span> {errors.password && <span className="text-red-500 normal-case tracking-normal">{errors.password}</span>}
                       </label>
                       <input name="password" type="password" value={formData.password} onChange={handleChange} disabled={isSubmitting}
                         className={`w-full bg-white dark:bg-zinc-950 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none transition-colors disabled:opacity-50 ${errors.password ? 'border-red-500 border focus:border-red-500 placeholder:text-red-500/70' : 'border border-zinc-200 dark:border-zinc-800 focus:border-[#00E599]'}`}
-                        placeholder="••••••••"
+                        placeholder="Kosongkan jika tetap"
                       />
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest flex justify-between transition-colors">
-                        <span>Confirm Password *</span> {errors.confirmPassword && <span className="text-red-500 normal-case tracking-normal">{errors.confirmPassword}</span>}
+                        <span>Confirm Password</span> {errors.confirmPassword && <span className="text-red-500 normal-case tracking-normal">{errors.confirmPassword}</span>}
                       </label>
                       <input name="confirmPassword" type="password" value={formData.confirmPassword} onChange={handleChange} disabled={isSubmitting}
                         className={`w-full bg-white dark:bg-zinc-950 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none transition-colors disabled:opacity-50 ${errors.confirmPassword ? 'border-red-500 border focus:border-red-500 placeholder:text-red-500/70' : 'border border-zinc-200 dark:border-zinc-800 focus:border-[#00E599]'}`}
                         placeholder="••••••••"
                       />
                     </div>
-                  </div>
-
-                  <div className="bg-[#00c985]/10 dark:bg-[#00E599]/10 border border-[#00c985]/20 dark:border-[#00E599]/20 rounded-lg p-3 mt-4 transition-colors">
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="bg-[#00c985]/20 dark:bg-[#00E599]/20 p-0.5 rounded text-[#00c985] dark:text-[#00E599] transition-colors"><Info size={12} strokeWidth={3} /></div>
-                      <p className="text-[#00c985] dark:text-[#00E599] text-xs font-bold transition-colors">Staff Role</p>
-                    </div>
-                    <p className="text-zinc-600 dark:text-[#00E599]/70 text-xs leading-relaxed transition-colors">
-                      Staff accounts have mobile-only access. They can record stock in/out and view notifications but cannot manage products, suppliers, or reports.
-                    </p>
-                  </div>
-
+                  </div>                 
+                  
                   <div className="flex justify-center gap-3 pt-4">
                     <button type="button" onClick={onClose} disabled={isSubmitting} className="px-6 py-2.5 rounded-lg text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors cursor-pointer disabled:opacity-50">
                       Cancel
                     </button>
                     <button type="submit" disabled={isSubmitting} className="px-6 py-2.5 rounded-lg text-sm font-bold bg-[#00E599] text-zinc-950 hover:bg-[#00c985] transition-colors cursor-pointer shadow-sm flex items-center gap-2 disabled:opacity-70">
                       {isSubmitting ? <span className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin"></span> : null}
-                      {isSubmitting ? "Creating..." : "Create Staff Account"}
+                      {isSubmitting ? "Saving..." : "Save Changes"}
                     </button>
                   </div>
                 </form>

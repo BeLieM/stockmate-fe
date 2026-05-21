@@ -5,49 +5,20 @@ import { Plus, Edit2, Trash2 } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import RuleFormModal from "@/components/rules/RuleFormModal";
-import DeleteConfirmModal from "@/components/shared/DeleteConfirmModal"; // Asumsi lokasinya di sini
-// import Cookies from 'js-cookie'; 
+import DeleteConfirmModal  from "@/components/shared/DeleteConfirmModal";
+import { useRules } from "@/hooks/useRules";
 
 export default function StockRulesPage() {
+    const { rulesList, stats, isLoading, fetchRules, deleteRule } = useRules();
+    
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [formMode, setFormMode] = useState("add");
     const [selectedRule, setSelectedRule] = useState(null);
 
-    const [rulesList, setRulesList] = useState([]);
-    const [stats, setStats] = useState({ critical: 0, low: 0, active: 0, total: 0 });
-
-    // --- MOCK API DATA ---
     useEffect(() => {
-        const dummyData = [
-            { id: 1, product: "Mie Instan Goreng", min: "20 pcs", current: 4, unit: "pcs", suggest: 50, outDate: "3 Mar 2026", status: "Critical" },
-            { id: 2, product: "Aqua 600ml", min: "30 btl", current: 85, unit: "btl", suggest: 60, outDate: "18 Mar 2026", status: "Normal" },
-            { id: 3, product: "Kopi Kapal Api", min: "15 pcs", current: 12, unit: "pcs", suggest: 30, outDate: "5 Mar 2026", status: "Low" },
-            { id: 4, product: "Deterjen Rinso", min: "12 pcs", current: 3, unit: "pcs", suggest: 40, outDate: "3 Mar 2026", status: "Critical" },
-            { id: 5, product: "Beras Premium 5kg", min: "10 krg", current: 22, unit: "krg", suggest: 20, outDate: "25 Mar 2026", status: "Normal" },
-        ];
-        setRulesList(dummyData);
-        setStats({ critical: 2, low: 1, active: 7, total: 8 });
-    }, []);
-
-    /* // ==========================================
-       // KODE API PRODUCTION (GET RULES)
-       // ==========================================
-    const fetchRulesAPI = async () => {
-      try {
-        const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-        const token = Cookies.get("stockmate_token");
-        const response = await fetch(`${API_URL}/rules`, {
-          headers: { "Authorization": `Bearer ${token}` }
-        });
-        const data = await response.json();
-        setRulesList(data.data.rules);
-        setStats(data.data.stats);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    */
+        fetchRules();
+    }, [fetchRules]);
 
     const handleOpenAdd = () => {
         setFormMode("add");
@@ -66,9 +37,15 @@ export default function StockRulesPage() {
         setIsDeleteModalOpen(true);
     };
 
-    const executeDelete = () => {
-        console.log("[SLICING MODE] Hapus Rule ID:", selectedRule?.id);
-        // API Call Delete diletakkan di sini
+    const executeDelete = async () => {
+        if (!selectedRule) return;
+        const success = await deleteRule(selectedRule.id);
+        if (success) {
+            setIsDeleteModalOpen(false);
+            setSelectedRule(null);
+        } else {
+            alert("Gagal menghapus konfigurasi aturan stok.");
+        }
     };
 
     const getStatusColor = (status) => {
@@ -81,7 +58,7 @@ export default function StockRulesPage() {
 
     return (
         <div className="h-full flex flex-col overflow-hidden pb-6">
-            {/* STATS CARDS */}
+            {/* STATS CARD SECTION */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 shrink-0">
                 <Card className="bg-red-50 dark:bg-red-500/5 border-red-200 dark:border-red-500/20 p-5 transition-colors shadow-sm">
                     <p className="text-red-600 dark:text-red-500 text-[10px] font-bold uppercase tracking-widest mb-2">Critical Rules Triggered</p>
@@ -102,10 +79,8 @@ export default function StockRulesPage() {
                 </Card>
             </div>
 
-            {/* MAIN TABLE CARD */}
+            {/* TABLE SECTION */}
             <Card className="bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 flex flex-col flex-1 min-h-0 overflow-hidden transition-colors shadow-sm">
-
-                {/* TOOLBAR */}
                 <div className="p-4 border-b border-zinc-200 dark:border-zinc-800 flex justify-between items-center shrink-0 transition-colors">
                     <h3 className="text-zinc-900 dark:text-white font-bold text-base transition-colors">Stock Rules Configuration</h3>
                     <button onClick={handleOpenAdd} className="bg-[#00E599] text-zinc-950 px-4 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-[#00c985] transition-colors cursor-pointer shrink-0 shadow-sm">
@@ -113,12 +88,11 @@ export default function StockRulesPage() {
                     </button>
                 </div>
 
-                {/* TABLE KONTEN */}
                 <div className="flex-1 overflow-y-auto min-h-0 custom-scrollbar">
-                    <Table className="text-zinc-700 dark:text-zinc-200 w-full min-w-[900px]">
+                    <Table className="text-zinc-700 dark:text-zinc-200 w-full min-w-[1000px]">
                         <TableHeader className="border-b border-zinc-200 dark:border-zinc-800 sticky top-0 bg-zinc-50 dark:bg-zinc-900 z-10 transition-colors">
                             <TableRow className="border-none hover:bg-transparent">
-                                <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Product</TableHead>
+                                <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-left pl-6">Product</TableHead>
                                 <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Min Threshold</TableHead>
                                 <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Current Stock</TableHead>
                                 <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Restock Suggestion</TableHead>
@@ -128,7 +102,11 @@ export default function StockRulesPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {rulesList.length === 0 ? (
+                            {isLoading ? (
+                                <TableRow>
+                                    <TableCell colSpan={7} className="text-center py-12 text-zinc-500 align-middle">Loading rules data...</TableCell>
+                                </TableRow>
+                            ) : rulesList.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={7} className="text-center py-12 text-zinc-500 align-middle">No rules configured.</TableCell>
                                 </TableRow>
@@ -137,19 +115,33 @@ export default function StockRulesPage() {
                                     const isCritical = rule.status === 'Critical';
                                     const isLow = rule.status === 'Low';
 
+                                    // Mengambil data predicted stockout
+                                    const rawPredictDate = rule.predicted_stockout || rule.product?.predicted_stockout || null;
+                                    
+                                    const predDateFmt = rawPredictDate 
+                                        ? new Date(rawPredictDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) 
+                                        : "-";
+
+                                    // REVISI: Logika warna font mengikuti status aturan stok secara penuh
+                                    let predictColor = 'text-[#00c985] dark:text-[#00E599]'; // Status Normal (Hijau)
+                                    if (isCritical) {
+                                        predictColor = 'text-red-600 dark:text-red-500 font-bold'; // Status Critical (Merah)
+                                    } else if (isLow) {
+                                        predictColor = 'text-yellow-600 dark:text-yellow-500 font-bold'; // Status Low (Kuning)
+                                    }
+
                                     return (
                                         <TableRow key={rule.id} className="border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors h-14">
 
-                                            <TableCell className="font-bold text-zinc-900 dark:text-white text-sm align-middle text-center transition-colors">
-                                                {rule.product}
+                                            <TableCell className="font-bold text-zinc-900 dark:text-white text-sm align-middle text-left pl-6 transition-colors">
+                                                {rule.product?.name || rule.product || "Unknown Product"}
                                             </TableCell>
 
-                                            <TableCell className="font-mono text-zinc-600 dark:text-zinc-300 text-sm align-middle text-center transition-colors">
-                                                {rule.min}
+                                            <TableCell className="font-mono text-zinc-600 dark:text-zinc-400 text-sm align-middle text-center transition-colors">
+                                                {rule.min} {rule.unit}
                                             </TableCell>
 
-                                            <TableCell className={`font-mono text-sm font-bold align-middle text-center transition-colors ${isCritical ? 'text-red-600 dark:text-red-500' : isLow ? 'text-yellow-600 dark:text-yellow-500' : 'text-zinc-900 dark:text-white'
-                                                }`}>
+                                            <TableCell className={`font-mono text-sm font-bold align-middle text-center transition-colors ${isCritical ? 'text-red-600 dark:text-red-500' : isLow ? 'text-yellow-600 dark:text-yellow-500' : 'text-zinc-900 dark:text-white'}`}>
                                                 {rule.current} {rule.unit}
                                             </TableCell>
 
@@ -157,9 +149,9 @@ export default function StockRulesPage() {
                                                 +{rule.suggest} {rule.unit}
                                             </TableCell>
 
-                                            <TableCell className={`font-mono text-xs align-middle text-center transition-colors ${isCritical ? 'text-red-600 dark:text-red-500' : isLow ? 'text-yellow-600 dark:text-yellow-500' : 'text-zinc-500'
-                                                }`}>
-                                                {rule.outDate}
+                                            {/* PREDICTED STOCKOUT DENGAN WARNA DINAMIS */}
+                                            <TableCell className={`font-mono text-sm align-middle text-center transition-colors ${rawPredictDate ? predictColor : 'text-zinc-500'}`}>
+                                                {predDateFmt}
                                             </TableCell>
 
                                             <TableCell className="align-middle text-center">
@@ -195,16 +187,16 @@ export default function StockRulesPage() {
                 onClose={() => setIsFormModalOpen(false)}
                 mode={formMode}
                 initialData={selectedRule}
+                onSuccess={fetchRules}
             />
 
             <DeleteConfirmModal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={executeDelete}
-                itemName={selectedRule?.product}
+                itemName={selectedRule?.product?.name || selectedRule?.product}
                 entityName="Stock Rule"
             />
-
         </div>
     );
 }
