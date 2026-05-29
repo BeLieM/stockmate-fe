@@ -5,6 +5,7 @@ import { Search, Plus, RefreshCw } from "lucide-react";
 import SupplierFormModal from "@/components/suppliers/SupplierFormModal";
 import SupplierReviewModal from "@/components/suppliers/SupplierReviewModal";
 import DeleteConfirmModal from "@/components/shared/DeleteConfirmModal";
+import SupplierViewReview from "@/components/suppliers/SupplierViewReview";
 import SupplierCard from "@/components/suppliers/SupplierCard";
 import { useSuppliers } from "@/hooks/useSuppliers";
 
@@ -16,6 +17,8 @@ export default function SuppliersPage() {
   const [formMode, setFormMode] = useState("add");
   const [selectedSupplier, setSelectedSupplier] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isViewReviewOpen, setIsViewReviewOpen] = useState(false);
+  const [selectedSupplierForReview, setSelectedSupplierForReview] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
@@ -69,6 +72,11 @@ export default function SuppliersPage() {
     window.open(mapUrl, '_blank');
   };
 
+  const handleOpenViewReviews = (supplier) => {
+    setSelectedSupplierForReview(supplier);
+    setIsViewReviewOpen(true);
+  };
+
   return (
     <div className="h-full flex flex-col overflow-hidden pb-6">
       <div className="flex gap-4 shrink-0 mb-6">
@@ -108,6 +116,7 @@ export default function SuppliersPage() {
                 onDelete={handleOpenDelete}
                 onReview={handleOpenReview}
                 onOpenMap={handleOpenMap}
+                onViewReviews={handleOpenViewReviews}
               />
             ))}
           </div>
@@ -135,6 +144,12 @@ export default function SuppliersPage() {
         onConfirm={executeDelete}
         itemName={selectedSupplier?.name}
         entityName="Supplier"
+      />
+
+      <SupplierViewReview
+        isOpen={isViewReviewOpen}
+        onClose={() => setIsViewReviewOpen(false)}
+        supplier={selectedSupplierForReview}
       />
     </div>
   );

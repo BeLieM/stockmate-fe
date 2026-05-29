@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 export const useCategories = () => {
   const [categories, setCategories] = useState([]);
@@ -35,6 +36,7 @@ export const useCategories = () => {
   }, [API_URL]);
 
   const addCategory = async (categoryData) => {
+    const toastId = toast.loading("Menambahkan kategori...");
     try {
       const token = Cookies.get("stockmate_token");
       const response = await fetch(`${API_URL}/api/category`, {
@@ -47,14 +49,17 @@ export const useCategories = () => {
       });
       if (!response.ok) throw new Error("Gagal menambah kategori");
       await fetchCategories();
+      toast.success("Kategori berhasil ditambahkan!", { id: toastId });
       return true;
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Gagal menambah kategori", { id: toastId });
       return false;
     }
   };
 
   const updateCategory = async (id, categoryData) => {
+    const toastId = toast.loading("Menyimpan perubahan...");
     try {
       const token = Cookies.get("stockmate_token");
       const response = await fetch(`${API_URL}/api/category/${id}`, {
@@ -67,14 +72,17 @@ export const useCategories = () => {
       });
       if (!response.ok) throw new Error("Gagal mengubah kategori");
       await fetchCategories();
+      toast.success("Kategori berhasil diperbarui!", { id: toastId });
       return true;
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Gagal memperbarui kategori", { id: toastId });
       return false;
     }
   };
 
   const deleteCategory = async (id) => {
+    const toastId = toast.loading("Menghapus kategori...");
     try {
       const token = Cookies.get("stockmate_token");
       const response = await fetch(`${API_URL}/api/category/${id}`, {
@@ -86,9 +94,11 @@ export const useCategories = () => {
       if (!response.ok) throw new Error("Gagal menghapus kategori");
       
       setCategories(prev => prev.filter(c => c.id !== id));
+      toast.success("Kategori berhasil dihapus!", { id: toastId });
       return true;
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Gagal menghapus kategori", { id: toastId });
       return false;
     }
   };

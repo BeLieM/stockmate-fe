@@ -7,23 +7,31 @@ import { Card } from "@/components/ui/card";
 import ProductFormModal from "@/components/products/ProductFormModal";
 import DeleteConfirmModal from "@/components/shared/DeleteConfirmModal";
 import { useProduct } from "@/hooks/useProduct";
+import { useSuppliers } from "@/hooks/useSuppliers";
 
 export default function ProductsPage() {
     const { products, isLoading, fetchProducts, deleteProduct } = useProduct();
+    const { suppliers, fetchSuppliers } = useSuppliers();
     
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [formMode, setFormMode] = useState("add");
+    
     const [searchQuery, setSearchQuery] = useState("");
+    const [selectedSupplier, setSelectedSupplier] = useState("");
 
     useEffect(() => {
         fetchProducts();
-    }, [fetchProducts]);
+        fetchSuppliers();
+    }, [fetchProducts, fetchSuppliers]);
 
-    const filteredProducts = products.filter(p => 
-        p.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    //LOGIKA FILTER GANDA (PENCARIAN & SUPPLIER)
+    const filteredProducts = products.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesSupplier = selectedSupplier ? p.supplier_id === selectedSupplier : true;
+        return matchesSearch && matchesSupplier;
+    });
 
     const handleOpenAdd = () => {
         setFormMode("add");
@@ -54,7 +62,21 @@ export default function ProductsPage() {
 
     return (
         <div className="h-full flex flex-col overflow-hidden pb-6">
-            <div className="flex justify-end mb-6 shrink-0">
+            <div className="flex justify-end items-center gap-3 mb-6 shrink-0">
+            
+                <div className="w-48">
+                    <select
+                        value={selectedSupplier}
+                        onChange={(e) => setSelectedSupplier(e.target.value)}
+                        className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full px-4 py-2 text-sm text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#00E599] transition-colors shadow-sm appearance-none cursor-pointer"
+                    >
+                        <option value="">All Suppliers</option>
+                        {suppliers.map(sup => (
+                            <option key={sup.id} value={sup.id}>{sup.name}</option>
+                        ))}
+                    </select>
+                </div>
+
                 <div className="relative w-64">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500" size={16} />
                     <input

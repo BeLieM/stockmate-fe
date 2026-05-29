@@ -3,7 +3,7 @@
 import React from "react";
 import { Building2, Edit2, Trash2, Phone, MapPin, Map, Star } from "lucide-react";
 
-export default function SupplierCard({ supplier, onEdit, onDelete, onReview, onOpenMap }) {
+export default function SupplierCard({ supplier, onEdit, onDelete, onReview, onOpenMap, onViewReviews }) {
   const renderStars = (rating) => {
     return Array.from({ length: 5 }).map((_, index) => (
       <Star
@@ -41,19 +41,24 @@ export default function SupplierCard({ supplier, onEdit, onDelete, onReview, onO
           {supplier.name}
         </h3>
 
-        <div className="mb-4">
-          <span className="bg-[#4DA6FF]/10 text-[#4DA6FF] text-[10px] font-bold px-2.5 py-1 rounded-md transition-colors">
-            {supplier.category}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-1.5 mb-5">
-          <div className="flex gap-0.5">
-            {renderStars(supplier.averageRating)}
+        {/* Rating Section with View Reviews Link */}
+        <div className="mb-5">
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <div className="flex gap-0.5">
+              {renderStars(supplier.averageRating)}
+            </div>
+            <span className="text-zinc-500 dark:text-zinc-400 text-xs ml-1">
+              {supplier.averageRating} ({supplier.reviewCount})
+            </span>
           </div>
-          <span className="text-zinc-500 dark:text-zinc-400 text-xs ml-1">
-            {supplier.averageRating} ({supplier.reviewCount} reviews)
-          </span>
+          {supplier.reviewCount > 0 && (
+              <button 
+                onClick={() => onViewReviews(supplier)}
+                className="text-[#00E599] hover:text-[#00c985] text-xs font-semibold transition-colors cursor-pointer"
+              >
+                View Review
+              </button>
+          )}
         </div>
 
         <div className="space-y-3 mb-6">

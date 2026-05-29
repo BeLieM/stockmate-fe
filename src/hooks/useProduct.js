@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 export const useProduct = () => {
   const [products, setProducts] = useState([]);
@@ -61,6 +62,7 @@ export const useProduct = () => {
           name: item.name,
           category: item.category?.name || item.category || "Kategori",
           category_id: item.category_id,
+          supplier_id: item.supplier_id,
           stock: stock,
           unit: item.unit || "pcs",
           min_threshold: threshold,
@@ -81,6 +83,7 @@ export const useProduct = () => {
   }, [API_URL]);
 
   const addProduct = async (productData) => {
+    const toastId = toast.loading("Menambahkan produk...");
     try {
       const token = Cookies.get("stockmate_token");
       const response = await fetch(`${API_URL}/api/product/`, {
@@ -93,14 +96,17 @@ export const useProduct = () => {
       });
       if (!response.ok) throw new Error("Gagal menambah produk");
       await fetchProducts();
+      toast.success("Produk berhasil ditambahkan!", { id: toastId });
       return true;
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Gagal menambah produk", { id: toastId });
       return false;
     }
   };
 
   const updateProduct = async (id, productData) => {
+    const toastId = toast.loading("Menyimpan perubahan...");
     try {
       const token = Cookies.get("stockmate_token");
       const response = await fetch(`${API_URL}/api/product/${id}`, {
@@ -113,14 +119,17 @@ export const useProduct = () => {
       });
       if (!response.ok) throw new Error("Gagal mengubah produk");
       await fetchProducts();
+      toast.success("Produk berhasil diperbarui!", { id: toastId });
       return true;
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Gagal memperbarui produk", { id: toastId });
       return false;
     }
   };
 
   const deleteProduct = async (id) => {
+    const toastId = toast.loading("Menghapus produk...");
     try {
       const token = Cookies.get("stockmate_token");
       const response = await fetch(`${API_URL}/api/product/${id}`, {
@@ -131,9 +140,11 @@ export const useProduct = () => {
       });
       if (!response.ok) throw new Error("Gagal menghapus produk");
       await fetchProducts();
+      toast.success("Produk berhasil dihapus!", { id: toastId });
       return true;
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Gagal menghapus produk", { id: toastId });
       return false;
     }
   };

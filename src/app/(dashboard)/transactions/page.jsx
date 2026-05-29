@@ -233,8 +233,8 @@ export default function TransactionsPage() {
 
                       <TableCell className="align-middle text-center">
                         <div className="flex flex-col items-center justify-center">
-                          <span className={`font-mono font-bold text-sm ${isStockIn ? 'text-[#00c985] dark:text-[#00E599]' : 'text-red-500'}`}>
-                            {isStockIn ? '+' : '-'}{formatIDR(transPrice)}
+                          <span className={`font-mono font-bold text-sm ${isStockIn ? 'text-red-500' : 'text-[#00c985] dark:text-[#00E599]' }`}>
+                            {isStockIn ? '-' : '+'}{formatIDR(transPrice)}
                           </span>
                           <span className="text-zinc-500 dark:text-zinc-400 text-[10px] mt-0.5">
                             {formatIDR(perPcs)} /pcs

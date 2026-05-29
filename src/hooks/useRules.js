@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 export const useRules = () => {
   const [rulesList, setRulesList] = useState([]);
@@ -55,8 +56,6 @@ export const useRules = () => {
           unit: rule.product?.unit || "pcs",
           suggest: rule.restock_suggestion || 0,
           status: status,
-          // --- TAMBAHAN PREDICTED STOCKOUT ---
-          // Mengambil dari dalam objek 'product' sesuai respons backend
           predicted_stockout: rule.product?.predicted_stockout || rule.predicted_stockout || null
         };
       });
@@ -70,6 +69,7 @@ export const useRules = () => {
   }, [API_URL]);
 
   const addRule = async (ruleData) => {
+    const toastId = toast.loading("Menambahkan rule stok...");
     try {
       const token = Cookies.get("stockmate_token");
       const response = await fetch(`${API_URL}/api/rule`, {
@@ -82,14 +82,17 @@ export const useRules = () => {
       });
       if (!response.ok) throw new Error("Gagal menambah rule");
       await fetchRules();
+      toast.success("Aturan stok berhasil ditambahkan!", { id: toastId });
       return true;
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Gagal menambah rule", { id: toastId });
       return false;
     }
   };
 
   const updateRule = async (id, ruleData) => {
+    const toastId = toast.loading("Menyimpan perubahan...");
     try {
       const token = Cookies.get("stockmate_token");
       const response = await fetch(`${API_URL}/api/rule/${id}`, {
@@ -102,14 +105,17 @@ export const useRules = () => {
       });
       if (!response.ok) throw new Error("Gagal mengubah rule");
       await fetchRules();
+      toast.success("Aturan stok berhasil diperbarui!", { id: toastId });
       return true;
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Gagal memperbarui rule", { id: toastId });
       return false;
     }
   };
 
   const deleteRule = async (id) => {
+    const toastId = toast.loading("Menghapus rule stok...");
     try {
       const token = Cookies.get("stockmate_token");
       const response = await fetch(`${API_URL}/api/rule/${id}`, {
@@ -121,9 +127,11 @@ export const useRules = () => {
       if (!response.ok) throw new Error("Gagal menghapus rule");
       
       await fetchRules(); 
+      toast.success("Aturan stok berhasil dihapus!", { id: toastId });
       return true;
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Gagal menghapus rule", { id: toastId });
       return false;
     }
   };

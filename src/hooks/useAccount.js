@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 export const useAccount = () => {
   const [profile, setProfile] = useState(null);
@@ -48,6 +49,7 @@ export const useAccount = () => {
   }, [API_URL]);
 
   const updateProfile = async (profileData) => {
+    const toastId = toast.loading("Menyimpan profil...");
     try {
       const token = Cookies.get("stockmate_token");
       const userId = getUserIdFromToken();
@@ -63,14 +65,17 @@ export const useAccount = () => {
       
       if (!response.ok) throw new Error("Gagal mengubah profil");
       await fetchProfile();
+      toast.success("Profil berhasil diperbarui!", { id: toastId });
       return true;
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Gagal memperbarui profil", { id: toastId });
       return false;
     }
   };
 
   const updatePassword = async (passwordData) => {
+    const toastId = toast.loading("Memperbarui kata sandi...");
     try {
       const token = Cookies.get("stockmate_token");
       const userId = getUserIdFromToken();
@@ -85,9 +90,11 @@ export const useAccount = () => {
       });
       
       if (!response.ok) throw new Error("Gagal mengubah password");
+      toast.success("Kata sandi berhasil diperbarui!", { id: toastId });
       return true;
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Gagal memperbarui kata sandi", { id: toastId });
       return false;
     }
   };

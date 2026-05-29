@@ -33,36 +33,55 @@ Aplikasi web ini dibangun menggunakan teknologi modern untuk memastikan performa
 
 ## 🚀 Tutorial Testing Project (Getting Started)
 
-Ikuti langkah-langkah berikut untuk menjalankan proyek web StockMate di lingkungan lokal (development).
+Ikuti panduan berikut untuk menyiapkan dan menjalankan StockMate Web Dashboard di lingkungan lokal secara konsisten.
 
 ### Prasyarat
-Pastikan Anda sudah menginstal perangkat lunak berikut di mesin Anda:
+Pastikan lingkungan pengembangan Anda telah memiliki:
 * Node.js (Versi 18.x atau lebih baru)
 * Package Manager (npm / yarn / pnpm)
 * Git
+* Akses ke REST API backend StockMate yang aktif
 
-### Langkah Instalasi
+### 1. Kloning Repository
 
-**1. Clone Repository**
 ```bash
 git clone https://github.com/BeLieM/stockmate-fe.git
 cd stockmate-frontend
 ```
 
-**2. Instalasi Dependensi**
+### 2. Instal Dependensi
+
 ```bash
 npm install
 ```
 
-**3. Konfigurasi Environment Variables**
+### 3. Konfigurasi Aplikasi
 
-Buat file bernama `.env` di root direktori proyek dan salin `.env.example`.
+Salin file `.env.example` menjadi `.env`, lalu isi alamat backend yang digunakan aplikasi.
 
-**4. Jalankan Development Server**
+```env
+# URL utama REST API backend (Express.js)
+NEXT_PUBLIC_API_BASE_URL=http://localhost:5000
+```
+
+Jika Anda menggunakan environment backend yang berbeda, sesuaikan nilai `NEXT_PUBLIC_API_BASE_URL` dengan URL yang aktif.
+
+### 4. Informasi Konfigurasi dan Akun Uji
+
+| Online Text | Informasi |
+| --- | --- |
+| Konfigurasi aplikasi | Set `NEXT_PUBLIC_API_BASE_URL` ke endpoint backend StockMate yang aktif sebelum menjalankan frontend. |
+| Akun Owner/Admin | Username: `owner@tokoberkahjaya.id`<br>Password: `Admin@123` |
+
+Catatan: akun di atas disiapkan sebagai akun uji demo. Jika backend Anda memakai seed data yang berbeda, gunakan kredensial yang tersedia pada environment tersebut.
+
+### 5. Jalankan Development Server
+
 ```bash
 npm run dev
 ```
-**5. Akses Aplikasi**
+
+### 6. Akses Aplikasi
 
 Buka browser dan akses `http://localhost:3000`.
 

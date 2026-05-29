@@ -17,7 +17,6 @@ export default function CategoriesPage() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
 
-    // Fetch data saat halaman dimuat
     useEffect(() => {
         fetchCategories();
     }, [fetchCategories]);
@@ -86,7 +85,6 @@ export default function CategoriesPage() {
                     <Table className="text-zinc-700 dark:text-zinc-200 w-full min-w-[600px]">
                         <TableHeader className="border-b border-zinc-200 dark:border-zinc-800 sticky top-0 bg-zinc-50 dark:bg-zinc-900 z-10 transition-colors">
                             <TableRow className="border-none hover:bg-transparent">
-                                <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">ID</TableHead>
                                 <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Name</TableHead>
                                 <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Total Products</TableHead>
                                 <TableHead className="text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest h-10 text-center">Actions</TableHead>
@@ -111,10 +109,6 @@ export default function CategoriesPage() {
 
                                     return (
                                         <TableRow key={cat.id} className="border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors h-14">
-
-                                            <TableCell className="text-zinc-500 dark:text-zinc-400 text-xs font-mono align-middle text-center transition-colors">
-                                                #{cat.id?.toString().slice(0, 6) || "---"}
-                                            </TableCell>
 
                                             <TableCell className="font-bold text-zinc-900 dark:text-white text-sm align-middle text-center transition-colors">
                                                 {cat.name}

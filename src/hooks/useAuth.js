@@ -2,13 +2,13 @@ import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { useAuthContext } from "@/context/AuthContext";
+import toast from "react-hot-toast";
 
 export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  // Mengambil fungsi logout dari Context (menggunakan fallback agar tidak error jika di luar context)
   const authContext = useAuthContext();
   const performLogout = authContext?.performLogout;
 
@@ -20,6 +20,7 @@ export const useAuth = () => {
     async (email, password) => {
       setIsLoading(true);
       setError(null);
+      const toastId = toast.loading("Sedang masuk...");
 
       try {
         const response = await fetch(`${API_URL}/api/user/login`, {
@@ -35,9 +36,15 @@ export const useAuth = () => {
         Cookies.set("stockmate_token", data.token, { expires: 7 });
         Cookies.set("stockmate_user_id", data.id || (data.user && data.user.id), { expires: 7 });
 
+        toast.success("Berhasil masuk!", { id: toastId });
         router.push("/home");
+        
+        return true;
       } catch (err) {
         setError(err.message);
+        toast.error(err.message || "Gagal masuk ke sistem", { id: toastId });
+        
+        return false;
       } finally {
         setIsLoading(false);
       }
@@ -49,6 +56,7 @@ export const useAuth = () => {
     async (userData) => {
       setIsLoading(true);
       setError(null);
+      const toastId = toast.loading("Membuat akun Anda...");
 
       try {
         const userRes = await fetch(`${API_URL}/api/user/register`, {
@@ -88,10 +96,12 @@ export const useAuth = () => {
           }),
         });
 
+        toast.success("Registrasi berhasil! Silakan login.", { id: toastId });
         router.push("/");
         return true;
       } catch (err) {
         setError(err.message);
+        toast.error(err.message || "Terjadi kesalahan saat registrasi", { id: toastId });
         return false;
       } finally {
         setIsLoading(false);
@@ -100,7 +110,6 @@ export const useAuth = () => {
     [API_URL, router],
   );
 
-  // Logout kini diurus sepenuhnya oleh AuthContext secara tersentralisasi
   const logout = useCallback(() => {
     if (performLogout) {
       performLogout();

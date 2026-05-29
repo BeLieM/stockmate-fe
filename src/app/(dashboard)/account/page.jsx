@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { useAccount } from "@/hooks/useAccount";
 import { useAuth } from "@/hooks/useAuth";
 import { useStore } from "@/hooks/useStore";
+import toast from "react-hot-toast";
 
 export default function AccountPage() {
   const { profile, isLoading: isProfileLoading, fetchProfile, updateProfile, updatePassword } = useAccount();
@@ -73,29 +74,19 @@ export default function AccountPage() {
     e.preventDefault();
     setIsSavingProfile(true);
 
-    let isSuccess = true;
-
     const profilePayload = {
       name: profileData.fullName,
       email: profileData.email
     };
     
-    const profileSuccess = await updateProfile(profilePayload);
-    if (!profileSuccess) isSuccess = false;
+    await updateProfile(profilePayload);
 
     if (storeData && storeData.id) {
       const storePayload = {
         name: profileData.storeName,
         address: profileData.storeAddress
       };
-      const storeSuccess = await updateStore(storeData.id, storePayload);
-      if (!storeSuccess) isSuccess = false;
-    }
-
-    if (isSuccess) {
-      alert("Profil dan Toko berhasil diperbarui!");
-    } else {
-      alert("Ada kesalahan saat memperbarui sebagian data. Periksa koneksi Anda.");
+      await updateStore(storeData.id, storePayload);
     }
 
     setIsSavingProfile(false);
@@ -105,7 +96,7 @@ export default function AccountPage() {
     e.preventDefault();
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert("Password baru dan konfirmasi password tidak cocok!");
+      toast.error("Password baru dan konfirmasi password tidak cocok!");
       return;
     }
 
@@ -118,10 +109,7 @@ export default function AccountPage() {
     const success = await updatePassword(payload);
 
     if (success) {
-      alert("Password berhasil diperbarui!");
       setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
-    } else {
-      alert("Gagal memperbarui password.");
     }
 
     setIsSavingPassword(false);

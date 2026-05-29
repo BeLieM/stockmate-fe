@@ -6,17 +6,20 @@ import Draggable from "react-draggable";
 import { X } from "lucide-react";
 import Cookies from 'js-cookie';
 import { useProduct } from "@/hooks/useProduct";
+// 🌟 IMPORT useSuppliers UNTUK MENGAMBIL DATA SUPPLIER
+import { useSuppliers } from "@/hooks/useSuppliers";
 
 export default function ProductFormModal({ isOpen, onClose, mode = "add", initialData = null, onSuccess }) {
   const nodeRef = useRef(null);
   const { addProduct, updateProduct } = useProduct();
+  const { suppliers, fetchSuppliers } = useSuppliers();
   
   const [categories, setCategories] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
-    name: '', category_id: '', stock_qty: '', min_stock: '', buy_price: '', sell_price: '', unit: 'pcs'
+    name: '', category_id: '', supplier_id: '', stock_qty: '', min_stock: '', buy_price: '', sell_price: '', unit: 'pcs'
   });
 
   useEffect(() => {
@@ -31,6 +34,8 @@ export default function ProductFormModal({ isOpen, onClose, mode = "add", initia
 
         const dataCat = await resCat.json();
         setCategories(dataCat.data || dataCat);
+
+        await fetchSuppliers();
       } catch (error) {
         console.error(error);
       }
@@ -42,6 +47,7 @@ export default function ProductFormModal({ isOpen, onClose, mode = "add", initia
         setFormData({
           name: initialData.name,
           category_id: initialData.category_id || "",
+          supplier_id: initialData.supplier_id || "",
           stock_qty: initialData.stock,
           min_stock: initialData.min,
           buy_price: initialData.buy,
@@ -49,11 +55,11 @@ export default function ProductFormModal({ isOpen, onClose, mode = "add", initia
           unit: initialData.unit
         });
       } else {
-        setFormData({ name: '', category_id: '', stock_qty: '', min_stock: '', buy_price: '', sell_price: '', unit: 'pcs' });
+        setFormData({ name: '', category_id: '', supplier_id: '', stock_qty: '', min_stock: '', buy_price: '', sell_price: '', unit: 'pcs' });
       }
       setErrors({});
     }
-  }, [isOpen, mode, initialData]);
+  }, [isOpen, mode, initialData, fetchSuppliers]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -120,12 +126,21 @@ export default function ProductFormModal({ isOpen, onClose, mode = "add", initia
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">Category *</label>
-                  <select name="category_id" value={formData.category_id} onChange={handleChange} className="w-full bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-[#00E599] transition-colors appearance-none" required>
-                    <option value="">Select Category</option>
-                    {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                  </select>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">Category *</label>
+                    <select name="category_id" value={formData.category_id} onChange={handleChange} className="w-full bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-[#00E599] transition-colors appearance-none" required>
+                      <option value="">Select Category</option>
+                      {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    </select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-zinc-600 dark:text-zinc-500 text-[10px] uppercase font-bold tracking-widest block transition-colors">Supplier *</label>
+                    <select name="supplier_id" value={formData.supplier_id} onChange={handleChange} className="w-full bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:border-[#00E599] transition-colors appearance-none" required>
+                      <option value="">Select Supplier</option>
+                      {suppliers.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                    </select>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 export const useTransaction = () => {
   const [transactions, setTransactions] = useState([]);
@@ -37,6 +38,7 @@ export const useTransaction = () => {
   }, [API_URL]);
 
   const addTransaction = async (transactionData) => {
+    const toastId = toast.loading("Mencatat transaksi...");
     try {
       const token = Cookies.get("stockmate_token");
       const response = await fetch(`${API_URL}/api/transactions/`, {
@@ -51,21 +53,23 @@ export const useTransaction = () => {
       if (!response.ok) throw new Error("Gagal mencatat transaksi");
 
       await fetchTransactions();
+      toast.success("Transaksi berhasil dicatat!", { id: toastId });
       return true;
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Gagal mencatat transaksi", { id: toastId });
       return false;
     }
   };
 
   const exportTransactions = async (startDate, endDate) => {
+    const toastId = toast.loading("Menyiapkan dokumen...");
     try {
       const token = Cookies.get("stockmate_token");
       if (!token) throw new Error("Token missing");
 
       const queryParams = new URLSearchParams({ startDate, endDate }).toString();
       
-      // 1. Minta backend untuk meng-generate file
       const response = await fetch(`${API_URL}/api/transactions/report?${queryParams}`, {
         method: "GET",
         headers: {
@@ -79,12 +83,8 @@ export const useTransaction = () => {
       let rawDownloadUrl = data.downloadUrl || data.data?.downloadUrl || data.url;
 
       if (rawDownloadUrl) {
-        // Fix ringan jika backend masih mengirim http:/ (satu slash)
         rawDownloadUrl = rawDownloadUrl.replace("http:/l", "http://l").replace("https:/l", "https://l");
 
-        console.log("📥 MENDOWNLOAD DARI:", rawDownloadUrl);
-
-        // 2. Langsung eksekusi download menggunakan link bawaan browser
         const link = document.createElement('a');
         link.href = rawDownloadUrl;
         link.setAttribute('download', ''); 
@@ -92,6 +92,7 @@ export const useTransaction = () => {
         link.click();
         document.body.removeChild(link);
 
+        toast.success("Dokumen berhasil diunduh!", { id: toastId });
         return true;
       } else {
         throw new Error("URL unduhan tidak ditemukan di dalam respons server.");
@@ -99,7 +100,7 @@ export const useTransaction = () => {
 
     } catch (err) {
       console.error("Export Error Detail:", err);
-      alert(`Gagal Download: ${err.message}`);
+      toast.error(err.message || "Gagal mengunduh dokumen", { id: toastId });
       return false;
     }
   };
